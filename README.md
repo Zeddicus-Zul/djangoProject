@@ -6,11 +6,6 @@ This is a simple Django project created as part of my effort to learn Django. Th
 - [Project Overview](#project-overview)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [Running the Development Server](#running-the-development-server)
-- [Project Structure](#project-structure)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Project Overview
 This project demonstrates a basic Django web application following the official tutorial. 
