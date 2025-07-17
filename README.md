@@ -13,7 +13,8 @@ This is a simple Django project created as part of my effort to learn Django. Th
 - [License](#license)
 
 ## Project Overview
-This project demonstrates a basic Django web application following the official Django tutorial steps. It includes:
+This project demonstrates a basic Django web application following the official tutorial. 
+It includes:
 - A Django project named `mysite`
 - An app named `gunSounds`
 - Basic templates and static files for serving audio content
