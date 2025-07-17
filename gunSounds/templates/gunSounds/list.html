@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gun Sounds</title>
+</head>
+<body>
+    <h1>Gun Sounds</h1>
+    {% load static %}
+    {% for sound in sounds %}
+        <div>
+            <p>{{ sound.title }}</p>
+            <audio id="audio-{{ forloop.counter }}" src="{% static sound.path %}"></audio>
+            <button onclick="document.getElementById('audio-{{ forloop.counter }}').play()">Play</button>
+            <button onclick="document.getElementById('audio-{{ forloop.counter }}').pause(); document.getElementById('audio-{{ forloop.counter }}').currentTime = 0;">Stop</button>
+        </div>
+    {% endfor %}
+</body>
+</html>
