@@ -2,11 +2,6 @@
 
 This is a simple Django project created as part of my effort to learn Django. The project includes an app intended to help with gun recognition in-game. 
 
-## Table of Contents
-- [Project Overview](#project-overview)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-
 ## Project Overview
 This project demonstrates a basic Django web application following the official tutorial. 
 It includes:
