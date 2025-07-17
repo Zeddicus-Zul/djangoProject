@@ -1,6 +1,6 @@
 # Django Project: 
 
-This is a simple Django project created as part of my effort to learning Django. The project includes an app intended to help with gun recognition in-game. 
+This is a simple Django project created as part of my effort to learn Django. The project includes an app intended to help with gun recognition in-game. 
 
 ## Table of Contents
 - [Project Overview](#project-overview)
