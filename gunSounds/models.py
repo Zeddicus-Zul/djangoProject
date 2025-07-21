@@ -5,6 +5,7 @@ from django.db import models
 class Gun(models.Model):
     gun_name = models.CharField(max_length=200)
     audio_file = models.FileField(upload_to='audio/')
+    gun_image = models.ImageField(upload_to='gunSounds/static/images/Frontier_73C.jpg')
     
     
     #how to store and play sounds in a django app
