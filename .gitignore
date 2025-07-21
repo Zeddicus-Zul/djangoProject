@@ -1,1 +1,39 @@
-token.txt
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.sqlite3
+*.log
+media/
+db.sqlite3
+/static/
+# If you collect static files:
+staticfiles/
+
+# Virtual environment folder
+venv/
+
+# VSCode settings folder
+.vscode/
+
+# macOS files
+.DS_Store
+
+# Windows alternate data streams metadata (Zone.Identifier)
+*:*Zone.Identifier
+
+# Ignore pyc files anywhere
+*.pyc
+
+# Ignore coverage reports
+.coverage
+htmlcov/
+
+# Ignore Python environment settings
+.env
+.env.*
+
+# Ignore backup files
+*~
