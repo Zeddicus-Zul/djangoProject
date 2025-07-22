@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Gun Sounds</title>
+    <meta charset="UTF-8" />
+    <title>Gun Sounds - Frontier 73C</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'gunSounds/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'gunSounds/styles.css' %}" />
 </head>
 
 <body>
@@ -12,15 +13,22 @@
 
     {% for sound in sounds %}
     <div class="container">
-        <img src="{% static 'gunSounds/images/Frontier_73C.jpg' %}" width="400" height="auto">
+        <h2>{{ sound.title }}</h2>
+        <img src="{% static sound.img %}" width="400" height="auto" alt="{{ sound.title }}" />
         <div class="buttons">
-            <button onclick="document.getElementById('audio-{{ forloop.counter }}').play()">1000m</button>
-            <button onclick="document.getElementById('audio-{{ forloop.counter }}').play()">800m</button>
-            <button onclick="document.getElementById('audio-{{ forloop.counter }}').play()">600m</button>
+            {% for clip in sound.audio_clips %}
+            <button onclick="document.getElementById('audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}').play()">
+                {{ clip.label }}
+            </button>
+            {% endfor %}
         </div>
-        <audio id="audio-{{ forloop.counter }}" src="{% static sound.path %}"></audio>
+
+        {% for clip in sound.audio_clips %}
+        <audio id="audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" src="{% static clip.path %}"></audio>
+        {% endfor %}
     </div>
     {% endfor %}
+
 </body>
 
 </html>
