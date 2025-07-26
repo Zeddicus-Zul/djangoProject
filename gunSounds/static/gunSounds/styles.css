@@ -46,3 +46,15 @@
 .buttons button:hover {
     background-color: #680e0e;
 }
+
+body {
+    background-color: #121212;  /* dark gray/black background */
+    color: #e0e0e0;             /* light text color for contrast */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+  text-align: center;
+}
