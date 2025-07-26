@@ -1,12 +1,31 @@
+# gunSounds/models.py
 from django.db import models
 
-# Create your models here. A model serves as a table in Django's database. The class is an attribute
-# and the "variables" are the attributes (Columns) with their data type. 
 class Gun(models.Model):
-    gun_name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     audio_file = models.FileField(upload_to='audio/')
-    gun_image = models.ImageField(upload_to='gunSounds/static/images/Frontier_73C.jpg')
-    
-    
-    #how to store and play sounds in a django app
-    #get one gun with one sound to play
+    image = models.ImageField(upload_to='images/')
+    ammo_type = models.CharField(max_length=10)
+    size = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.name
+
+from django.db import models
+
+class Gun(models.Model):
+    name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='images/')
+    ammo_type = models.CharField(max_length=10)
+    size = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.name
+
+class AudioClip(models.Model):
+    gun = models.ForeignKey(Gun, related_name='audio_clips', on_delete=models.CASCADE)
+    label = models.CharField(max_length=100)
+    audio_file = models.FileField(upload_to='audio/')
+
+    def __str__(self):
+        return f"{self.gun.name} - {self.label}"

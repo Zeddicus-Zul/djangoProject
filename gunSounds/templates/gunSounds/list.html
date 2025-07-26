@@ -3,28 +3,32 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Gun Sounds - Frontier 73C</title>
+    <title>Gun Sounds</title>
     {% load static %}
+    <!-- Static CSS file -->
     <link rel="stylesheet" href="{% static 'gunSounds/styles.css' %}" />
 </head>
 
 <body>
     <h1>Gun Sounds</h1>
 
-    {% for sound in sounds %}
+    {% for gun in guns %}
     <div class="container">
-        <h2>{{ sound.title }}</h2>
-        <img src="{% static sound.img %}" width="400" height="auto" alt="{{ sound.title }}" />
+        <h2>{{ gun.name }}</h2>
+        <!-- Media image file, use .url without static -->
+        <img src="{{ gun.image.url }}" width="400" height="auto" alt="{{ gun.name }}" />
+
         <div class="buttons">
-            {% for clip in sound.audio_clips %}
+            {% for clip in gun.audio_clips.all %}
             <button onclick="document.getElementById('audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}').play()">
                 {{ clip.label }}
             </button>
             {% endfor %}
         </div>
 
-        {% for clip in sound.audio_clips %}
-        <audio id="audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" src="{% static clip.path %}"></audio>
+        {% for clip in gun.audio_clips.all %}
+        <!-- Media audio file, use .url without static -->
+        <audio id="audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" src="{{ clip.audio_file.url }}"></audio>
         {% endfor %}
     </div>
     {% endfor %}
