@@ -4,7 +4,7 @@ from .models import Gun, AudioClip
 
 class AudioClipInline(admin.TabularInline):
     model = AudioClip
-    extra = 10  # Shows 10 empty slots for new clips by default
+    extra = 5  # Shows 10 empty slots for new clips by default
 
 class GunAdmin(admin.ModelAdmin):
     inlines = [AudioClipInline]
