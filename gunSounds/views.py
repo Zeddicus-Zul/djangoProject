@@ -21,3 +21,5 @@ def sound_list(request):
         "ammo_types": ammo_types,
         "sizes": sizes
     })
+
+    #test
