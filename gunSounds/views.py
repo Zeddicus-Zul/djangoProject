@@ -6,7 +6,7 @@ def sound_list(request):
 
     ammo_type = request.GET.get('ammo_type')
     size = request.GET.get('size')
-    sort = request.GET.get('sort')
+    # sort is unused, but you can handle it if needed
 
     if ammo_type:
         guns = guns.filter(ammo_type=ammo_type)
@@ -19,7 +19,7 @@ def sound_list(request):
     return render(request, "gunSounds/list.html", {
         "guns": guns,
         "ammo_types": ammo_types,
-        "sizes": sizes
+        "sizes": sizes,
+        "selected_ammo_type": ammo_type,
+        "selected_size": size,
     })
-
-    #test

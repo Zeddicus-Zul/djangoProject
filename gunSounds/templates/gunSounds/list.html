@@ -17,7 +17,7 @@
         <select name="ammo_type" id="ammo_type">
             <option value="">All</option>
             {% for atype in ammo_types %}
-            <option value="{{ atype }}" {% if request.GET.ammo_type == atype %}selected{% endif %}>{{ atype }}</option>
+                <option value="{{ atype }}" {% if atype == selected_ammo_type %}selected{% endif %}>{{ atype }}</option>
             {% endfor %}
         </select>
 
@@ -25,7 +25,7 @@
         <select name="size" id="size">
             <option value="">All</option>
             {% for s in sizes %}
-            <option value="{{ s }}" {% if request.GET.size == s %}selected{% endif %}>{{ s }}</option>
+                <option value="{{ s }}" {% if s == selected_size %}selected{% endif %}>{{ s }}</option>
             {% endfor %}
         </select>
 
@@ -33,24 +33,26 @@
     </form>
 
     <!-- Gun Display -->
-    {% for gun in guns %}
-    <div class="container">
-        <h2>{{ gun.name }}</h2>
-        <img src="{{ gun.image.url }}" width="400" height="auto" alt="{{ gun.name }}" />
+    <div class="gun-grid">
+        {% for gun in guns %}
+            <div class="gun-box">
+                <h2>{{ gun.name }}</h2>
+                <img src="{{ gun.image.url }}" width="400" height="auto" alt="{{ gun.name }}" />
 
-        <div class="buttons">
-            {% for clip in gun.audio_clips.all %}
-            <button onclick="document.getElementById('audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}').play()">
-                {{ clip.label }}
-            </button>
-            {% endfor %}
-        </div>
+                <div class="buttons">
+                    {% for clip in gun.audio_clips.all %}
+                        <button onclick="document.getElementById('audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}').play()">
+                            {{ clip.label }}
+                        </button>
+                    {% endfor %}
+                </div>
 
-        {% for clip in gun.audio_clips.all %}
-        <audio id="audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" src="{{ clip.audio_file.url }}"></audio>
+                {% for clip in gun.audio_clips.all %}
+                    <audio id="audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" src="{{ clip.audio_file.url }}"></audio>
+                {% endfor %}
+            </div>
         {% endfor %}
     </div>
-    {% endfor %}
 
 </body>
 
