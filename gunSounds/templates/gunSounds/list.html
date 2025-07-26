@@ -5,17 +5,37 @@
     <meta charset="UTF-8" />
     <title>Gun Sounds</title>
     {% load static %}
-    <!-- Static CSS file -->
     <link rel="stylesheet" href="{% static 'gunSounds/styles.css' %}" />
 </head>
 
 <body>
     <h1>Gun Sounds</h1>
 
+    <!-- Filter/Sort Bar -->
+    <form method="get" action=".">
+        <label for="ammo_type">Ammo Type:</label>
+        <select name="ammo_type" id="ammo_type">
+            <option value="">All</option>
+            {% for atype in ammo_types %}
+            <option value="{{ atype }}" {% if request.GET.ammo_type == atype %}selected{% endif %}>{{ atype }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="size">Size:</label>
+        <select name="size" id="size">
+            <option value="">All</option>
+            {% for s in sizes %}
+            <option value="{{ s }}" {% if request.GET.size == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Apply</button>
+    </form>
+
+    <!-- Gun Display -->
     {% for gun in guns %}
     <div class="container">
         <h2>{{ gun.name }}</h2>
-        <!-- Media image file, use .url without static -->
         <img src="{{ gun.image.url }}" width="400" height="auto" alt="{{ gun.name }}" />
 
         <div class="buttons">
@@ -27,7 +47,6 @@
         </div>
 
         {% for clip in gun.audio_clips.all %}
-        <!-- Media audio file, use .url without static -->
         <audio id="audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" src="{{ clip.audio_file.url }}"></audio>
         {% endfor %}
     </div>
