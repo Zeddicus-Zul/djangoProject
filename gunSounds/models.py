@@ -1,4 +1,3 @@
-# gunSounds/models.py
 from django.db import models
 
 class Gun(models.Model):
