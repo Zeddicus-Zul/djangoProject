@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import Gun, AudioClip
-# Register models here
 
 @admin.action(description="Test")
 class AudioClipInline(admin.TabularInline):

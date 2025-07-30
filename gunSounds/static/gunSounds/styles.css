@@ -1,18 +1,24 @@
 /* Layout grid for gun containers */
 .gun-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Smaller min width */
-    gap: 30px;
+    display: flex; /* Use flexbox for more flexible wrapping */
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    justify-content: center; /* Center the items horizontally */
+    gap: 20px; /* Space between gun boxes */
     padding: 20px;
+    margin: 0 auto; /* Keep centered, but flexbox handles distribution */
+    max-width: 1200px; /* Still a good idea to limit overall width */
 }
 
 .gun-box {
-    width: 400px;           /* Set fixed width */
-    height: 250px;          /* Set fixed height so all boxes are same height */
-    margin: 20px;
+    /* Use flex-basis for flexible width, allowing three per row with gaps */
+    flex: 1 1 calc(33.333% - 40px); /* Roughly 1/3rd width minus gap compensation */
+    min-width: 280px; /* Minimum width for each box before wrapping */
+    max-width: 400px; /* Optional: A max width to prevent boxes from becoming too large */
+    height: 250px; /* Keep fixed height for consistency */
+    /* margin: 20px; REMOVED - gap handles spacing */
     padding: 10px;
     border: 1px solid #ccc;
-    background-color: #f9f9f9;
+    background-color: #000000;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
@@ -22,9 +28,9 @@
 }
 
 .gun-box img {
-    max-width: 100%;        /* Max width to fill container horizontally */
-    max-height: 200px;      /* Limit max height to keep all images same height */
-    object-fit: contain;    /* Scale image proportionally to fit */
+    max-width: 100%; /* Max width to fill container horizontally */
+    max-height: 100px; /* Limit max height to keep all images same height */
+    object-fit: contain; /* Scale image proportionally to fit */
     margin-bottom: 10px;
     display: block;
 }
@@ -48,13 +54,13 @@
 }
 
 body {
-    background-color: #121212;  /* dark gray/black background */
-    color: #e0e0e0;             /* light text color for contrast */
+    background-color: #121212; /* dark gray/black background */
+    color: #e0e0e0; /* light text color for contrast */
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
 }
 
 h1 {
-  text-align: center;
+    text-align: center;
 }

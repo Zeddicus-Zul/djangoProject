@@ -6,34 +6,75 @@
     <title>Gun Sounds</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'gunSounds/styles.css' %}" />
+    <style>
+        /* Add some basic styling for the filter buttons */
+        .filter-buttons {
+            margin-bottom: 20px;
+            text-align: center; /* Center the filter buttons */
+        }
+        .filter-buttons button {
+            margin: 5px;
+            padding: 8px 15px;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .filter-buttons button:hover {
+            background-color: #555;
+            border-color: #777;
+        }
+        .filter-buttons button.active {
+            background-color: #680e0e; /* Highlight for the selected filter */
+            border-color: #881e1e;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Gun Sounds</h1>
-    
 
-    <!-- Filter/Sort Bar -->
-    <form method="get" action=".">
-        <label for="ammo_type">Ammo Type:</label>
-        <select name="ammo_type" id="ammo_type">
-            <option value="">All</option>
+    <div class="filter-bar">
+        <div class="filter-buttons">
+            <span>Ammo Type:</span>
+            <button
+                onclick="window.location.href = `{% url 'sound_list' %}?size={{ selected_size }}`"
+                class="{% if not selected_ammo_type %}active{% endif %}"
+            >
+                All
+            </button>
             {% for atype in ammo_types %}
-                <option value="{{ atype }}" {% if atype == selected_ammo_type %}selected{% endif %}>{{ atype }}</option>
+                <button
+                    onclick="window.location.href = `{% url 'sound_list' %}?ammo_type={{ atype }}&size={{ selected_size }}`"
+                    class="{% if atype == selected_ammo_type %}active{% endif %}"
+                >
+                    {{ atype }}
+                </button>
             {% endfor %}
-        </select>
+        </div>
 
-        <label for="size">Size:</label>
-        <select name="size" id="size">
-            <option value="">All</option>
+        <div class="filter-buttons">
+            <span>Size:</span>
+            <button
+                onclick="window.location.href = `{% url 'sound_list' %}?ammo_type={{ selected_ammo_type }}`"
+                class="{% if not selected_size %}active{% endif %}"
+            >
+                All
+            </button>
             {% for s in sizes %}
-                <option value="{{ s }}" {% if s == selected_size %}selected{% endif %}>{{ s }}</option>
+                <button
+                    onclick="window.location.href = `{% url 'sound_list' %}?ammo_type={{ selected_ammo_type }}&size={{ s }}`"
+                    class="{% if s == selected_size %}active{% endif %}"
+                >
+                    {{ s }}
+                </button>
             {% endfor %}
-        </select>
+        </div>
+    </div>
 
-        <button type="submit">Apply</button>
-    </form>
 
-    <!-- Gun Display -->
     <div class="gun-grid">
         {% for gun in guns %}
             <div class="gun-box">
@@ -54,7 +95,6 @@
             </div>
         {% endfor %}
     </div>
-
 </body>
 
 </html>

@@ -4,22 +4,22 @@ from .models import Gun
 def sound_list(request):
     guns = Gun.objects.all()
 
-    ammo_type = request.GET.get('ammo_type')
-    size = request.GET.get('size')
-    # sort is unused, but you can handle it if needed
+    selected_ammo_type = request.GET.get('ammo_type')
+    selected_size = request.GET.get('size')
 
-    if ammo_type:
-        guns = guns.filter(ammo_type=ammo_type)
-    if size:
-        guns = guns.filter(size=size)
+    if selected_ammo_type:
+        guns = guns.filter(ammo_type=selected_ammo_type)
+    if selected_size:
+        guns = guns.filter(size=selected_size)
 
-    ammo_types = Gun.objects.values_list('ammo_type', flat=True).distinct()
-    sizes = Gun.objects.values_list('size', flat=True).distinct()
+    all_ammo_types = Gun.objects.values_list('ammo_type', flat=True).distinct().order_by('ammo_type')
+    all_sizes = Gun.objects.values_list('size', flat=True).distinct().order_by('size')
 
-    return render(request, "gunSounds/list.html", {
-        "guns": guns,
-        "ammo_types": ammo_types,
-        "sizes": sizes,
-        "selected_ammo_type": ammo_type,
-        "selected_size": size,
-    })
+    context = {
+        'guns': guns,
+        'ammo_types': all_ammo_types,
+        'sizes': all_sizes,
+        'selected_ammo_type': selected_ammo_type,
+        'selected_size': selected_size,
+    }
+    return render(request, 'gunSounds/list.html', context)
