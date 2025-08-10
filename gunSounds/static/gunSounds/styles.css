@@ -1,12 +1,11 @@
-/* Layout grid for gun containers */
 .gun-grid {
-    display: flex; /* Use flexbox for more flexible wrapping */
-    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    display: flex; 
+    flex-wrap: wrap;
     justify-content: center; /* Center the items horizontally */
-    gap: 20px; /* Space between gun boxes */
+    gap: 20px; 
     padding: 20px;
-    margin: 0 auto; /* Keep centered, but flexbox handles distribution */
-    max-width: 1200px; /* Still a good idea to limit overall width */
+    margin: 0 auto; 
+    max-width: 1200px; 
 }
 
 .gun-box {
@@ -15,7 +14,6 @@
     min-width: 280px; /* Minimum width for each box before wrapping */
     max-width: 400px; /* Optional: A max width to prevent boxes from becoming too large */
     height: 250px; /* Keep fixed height for consistency */
-    /* margin: 20px; REMOVED - gap handles spacing */
     padding: 10px;
     border: 1px solid #ccc;
     background-color: #000000;
