@@ -12,15 +12,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-a%23y!c-9_9k_i=4yx)bph%li53)y#+wkye%q#n%q-#q3d2swu'
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
-    'gunsounds-1077385309308.us-west1.run.app',
+    'gun-sounds-app-1096649553455.us-west2.run.app',  # ← your Cloud Run URL
     'localhost',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://gunsounds-1077385309308.us-west1.run.app',
+    'https://gun-sounds-app-1096649553455.us-west2.run.app',
 ]
 
 # Application definition
@@ -96,11 +97,11 @@ USE_TZ = True
 
 # ✨ Google Cloud Storage Integration
 
-GS_BUCKET_NAME = 'gunsounds-media'
+GS_BUCKET_NAME = 'portfoliosite_media_bucket'
 
-GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.path.join(BASE_DIR, '..', 'django-static-uploader-GCS-json-key.json')
-)
+
+# Let GCP handle auth using the default service account (if permission is granted)
+GS_CREDENTIALS = None
 
 
 STATICFILES_STORAGE = 'mysite.storage_backends.StaticGCSStorage'

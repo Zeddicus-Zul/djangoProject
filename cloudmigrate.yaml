@@ -1,11 +1,52 @@
 steps:
+# Step 1: Build the Docker image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/gun-sounds-app', '.']
+  args: [
+    'build',
+    '-t', 'us-west2-docker.pkg.dev/$PROJECT_ID/portfoliosite/gun-sounds-app',
+    '.'
+  ]
 
+# Step 2: Push the image to Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'push', 'us-west2-docker.pkg.dev/$PROJECT_ID/portfoliosite/gun-sounds-app'
+  ]
+
+# Step 3: Delete existing migration job (if any)
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['run', 'deploy', 'gun-sounds-app',
-         '--image', 'gcr.io/$PROJECT_ID/gun-sounds-app',
-         '--platform', 'managed',
-         '--region', 'us-west2',
-         '--allow-unauthenticated',
-         '--set-secrets', 'django_settings=django_settings:latest,superuser_password=superuser_password:latest']
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |-
+      gcloud run jobs delete run-migrations --region us-west2 --quiet || true
+
+# Step 4: Create Cloud Run job to run migrations
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: [
+    'run', 'jobs', 'create', 'run-migrations',
+    '--image', 'us-west2-docker.pkg.dev/$PROJECT_ID/portfoliosite/gun-sounds-app',
+    '--region', 'us-west2',
+    '--command=python',
+    '--args=manage.py,migrate',
+    '--set-secrets=django_settings=django_settings:latest,superuser_password=superuser_password:latest'
+  ]
+
+# Step 5: Execute the migration job
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: [
+    'run', 'jobs', 'execute', 'run-migrations',
+    '--region', 'us-west2',
+    '--wait'
+  ]
+
+# Step 6: Deploy your actual service
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: [
+    'run', 'deploy', 'gun-sounds-app',
+    '--image', 'us-west2-docker.pkg.dev/$PROJECT_ID/portfoliosite/gun-sounds-app',
+    '--platform', 'managed',
+    '--region', 'us-west2',
+    '--allow-unauthenticated',
+    '--set-secrets', 'django_settings=django_settings:latest,superuser_password=superuser_password:latest'
+  ]
