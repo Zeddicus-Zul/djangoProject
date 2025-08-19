@@ -2,18 +2,6 @@ from django.db import models
 
 class Gun(models.Model):
     name = models.CharField(max_length=200)
-    audio_file = models.FileField(upload_to='audio/')
-    image = models.ImageField(upload_to='images/')
-    ammo_type = models.CharField(max_length=10)
-    size = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.name
-
-from django.db import models
-
-class Gun(models.Model):
-    name = models.CharField(max_length=200)
     image = models.ImageField(upload_to='images/')
     ammo_type = models.CharField(max_length=10)
     size = models.CharField(max_length=10)
