@@ -1,0 +1,5 @@
+Take a single feature. 
+1) add broken s*** everywhere until it works 
+2) keep track of everything you add
+3) once it works, try to rebuild it the minimal settings 
+4) clean up all the stuff you don't need. 
