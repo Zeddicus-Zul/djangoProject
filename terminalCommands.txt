@@ -1,0 +1,12 @@
+#Opens database : gcloud sql connect portfoliosite-database   --user=gun_sounds_user   --database=gun_sounds_db
+
+
+# Run the proxy (leave it running)
+./cloud-sql-proxy --address 127.0.0.1 --port 5432 \
+  portfoliosite-468605:us-west2:portfoliosite-database
+
+
+
+-- Build and push the image to GCP using YAML---
+gcloud builds submit --config cloudmigrate.yaml
+

@@ -1,27 +1,47 @@
-**/__pycache__
-**/.venv
-**/.classpath
-**/.dockerignore
-**/.env
-**/.git
-**/.gitignore
-**/.project
-**/.settings
-**/.toolstarget
-**/.vs
-**/.vscode
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Virtual environments
+venv/
+.venv/
+
+# Local env & secrets
+.env
+.env.*
+*.log
+
+# SQLite (dev) databases
+db.sqlite3
+*.sqlite3
+
+# OS/editor noise
+.DS_Store
+.vscode/
+.idea/
+
+# SCM
+.git/
+.gitignore
+
+# Node/build artifacts
+node_modules/
+npm-debug.log
+bin/
+obj/
+charts/
+docker-compose*
+compose*
 **/*.*proj.user
-**/*.dbmdl
-**/*.jfm
-**/bin
-**/charts
-**/docker-compose*
-**/compose*
-**/Dockerfile*
-**/node_modules
-**/npm-debug.log
-**/obj
-**/secrets.dev.yaml
-**/values.dev.yaml
+
+# Project-specific large dirs you don't want in the image
+media/
+staticfiles/
+audio/
+
+# Keep app static sources (e.g., gunSounds/static/) INCLUDED so collectstatic can read them
+
+# Optional: keep these docs out of the image
 LICENSE
 README.md

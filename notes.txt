@@ -1,1 +1,0 @@
-Beautify the site and spacing of gun objects to a uniform appearance.
