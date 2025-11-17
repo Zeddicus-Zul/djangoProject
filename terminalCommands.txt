@@ -3,7 +3,7 @@
 
 # Run the proxy (leave it running)
 ./cloud-sql-proxy --address 127.0.0.1 --port 5432 \
-  portfoliosite-468605:us-west2:portfoliosite-database
+  portfoliosite-468605:us-west1:portfoliosite-database
 
 
 

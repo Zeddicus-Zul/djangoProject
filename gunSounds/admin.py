@@ -1,10 +1,10 @@
 from django.contrib import admin
 from .models import Gun, AudioClip
 
-@admin.action(description="Test")
 class AudioClipInline(admin.TabularInline):
     model = AudioClip
-    extra = 5  # Shows 5 empty slots for new objects by default
+    extra = 5 # number of extra forms to display
+    max_num = 5  # maximum number of audio clips per gun
 
 
 class GunAdmin(admin.ModelAdmin):
