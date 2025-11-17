@@ -7,6 +7,6 @@
 
 
 
--- Build and push the image to GCP using YAML---
+-- Build and push the image to GCP using YAML----
 gcloud builds submit --config cloudmigrate.yaml
 

@@ -1,5 +1,7 @@
 FROM python:3.12-slim
 
+ENV DJANGO_SETTINGS_MODULE=mysite.settings.prod
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
@@ -11,5 +13,9 @@ RUN python -m pip install --upgrade pip && \
 
 COPY . /app
 
-EXPOSE 8080
-CMD ["sh","-c","exec gunicorn --bind 0.0.0.0:${PORT:-8080} mysite.wsgi:application --workers 3 --chdir /app"]
+EXPOSE 80
+# Entrypoint script runs migrations, collectstatic, then starts Gunicorn
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["gunicorn", "mysite.wsgi:application", "--bind", "0.0.0.0:80"]
