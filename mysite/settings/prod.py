@@ -11,6 +11,7 @@ ALLOWED_HOSTS = [
     "136.118.95.21",
     "localhost",
     "127.0.0.1",
+    "gun-sounds-app-1096649553455.us-west1.run.app",
 ]
 
 # --- Use SQLite for local VM testing ---
@@ -20,23 +21,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
-# --- Cloud SQL config (commented out for now) ---
-# DB_NAME = os.getenv("DB_NAME", "gun_sounds_db")
-# DB_USER = os.getenv("DB_USER", "gun_sounds_user")
-# DB_PASSWORD = os.getenv("DB_PASSWORD", "")
-# INSTANCE = os.getenv(
-#     "CLOUD_SQL_CONNECTION_NAME",
-#     os.getenv("INSTANCE_CONNECTION_NAME", "portfoliosite-468605:us-west1:portfoliosite-database")
-# )
-# USE_UNIX_SOCKET = os.getenv("DB_USE_SOCKET", "1") == "1"
-# if USE_UNIX_SOCKET:
-#     DB_SOCKET_DIR = os.getenv("DB_SOCKET_DIR", "/cloudsql")
-#     DATABASES = { ... }
-# else:
-#     DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
-#     DB_PORT = int(os.getenv("DB_PORT", "6543"))
-#     DATABASES = { ... }
 
 # --- Use local storage for static and media files for testing ---
 STORAGES = {

@@ -9,18 +9,3 @@ DATABASES = {
 
 
 ENV_NAME = "dev" 
-
-
-# If you prefer local Postgres in dev, swap the block above for this:
-# import os
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv("PGDATABASE", "gun_sounds_db"),
-#         "USER": os.getenv("PGUSER", "postgres"),
-#         "PASSWORD": os.getenv("PGPASSWORD", ""),
-#         "HOST": os.getenv("PGHOST", "127.0.0.1"),
-#         "PORT": int(os.getenv("PGPORT", "5432")),
-#         "CONN_MAX_AGE": 0,
-#     }
-# }

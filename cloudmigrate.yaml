@@ -2,10 +2,9 @@
 
 substitutions:
   _REGION: us-west1
-  _REPOSITORY: portfoliosite
   _SERVICE_NAME: gun-sounds-app
   _SERVICE_ACCOUNT: 1096649553455-compute@developer.gserviceaccount.com   # your SA email
-  _CLOUDSQL: portfoliosite-468605:us-west2:portfoliosite-database         # instance connection name
+  _CLOUDSQL: portfoliosite-468605:us-west1:portfoliosite-database         # instance connection name
   _DB_NAME: gun_sounds_db
   _DB_USER: gun_sounds_user
 
@@ -15,16 +14,16 @@ steps:
     args:
       [
         'build',
-        '-t','us-west2-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_SERVICE_NAME:latest',
-        '-t','us-west2-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_SERVICE_NAME:$BUILD_ID',
+        '-t','us-west1-docker.pkg.dev/$PROJECT_ID/webapp/$_SERVICE_NAME:latest',
+        '-t','us-west1-docker.pkg.dev/$PROJECT_ID/webapp/$_SERVICE_NAME:$BUILD_ID',
         '.'
       ]
 
   # 1) Push both tags
   - name: gcr.io/cloud-builders/docker
-    args: ['push','us-west2-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_SERVICE_NAME:latest']
+    args: ['push','us-west1-docker.pkg.dev/$PROJECT_ID/webapp/$_SERVICE_NAME:latest']
   - name: gcr.io/cloud-builders/docker
-    args: ['push','us-west2-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_SERVICE_NAME:$BUILD_ID']
+    args: ['push','us-west1-docker.pkg.dev/$PROJECT_ID/webapp/$_SERVICE_NAME:$BUILD_ID']
 
   # 2) (Re)create + run COLLECTSTATIC job on the new image tag
   - name: gcr.io/cloud-builders/gcloud
@@ -35,7 +34,7 @@ steps:
         set -e
         gcloud run jobs delete run-collectstatic --region=$_REGION --quiet || true
         gcloud run jobs create run-collectstatic \
-          --image us-west2-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_SERVICE_NAME:$BUILD_ID \
+          --image us-west1-docker.pkg.dev/$PROJECT_ID/webapp/$_SERVICE_NAME:$BUILD_ID \
           --region $_REGION \
           --service-account $_SERVICE_ACCOUNT \
           --command=python \
@@ -52,7 +51,7 @@ steps:
         set -e
         gcloud run jobs delete run-migrations --region=$_REGION --quiet || true
         gcloud run jobs create run-migrations \
-          --image us-west2-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_SERVICE_NAME:$BUILD_ID \
+          --image us-west1-docker.pkg.dev/$PROJECT_ID/webapp/$_SERVICE_NAME:$BUILD_ID \
           --region $_REGION \
           --service-account $_SERVICE_ACCOUNT \
           --command=python \
@@ -67,7 +66,7 @@ steps:
     args:
       [
         'run','deploy','$_SERVICE_NAME',
-        '--image','us-west2-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_SERVICE_NAME:$BUILD_ID',
+        '--image','us-west1-docker.pkg.dev/$PROJECT_ID/webapp/$_SERVICE_NAME:$BUILD_ID',
         '--platform','managed',
         '--region','$_REGION',
         '--allow-unauthenticated',

@@ -10,4 +10,4 @@ echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
 # Start Gunicorn
-exec gunicorn mysite.wsgi:application --bind 0.0.0.0:80
+exec gunicorn mysite.wsgi:application --bind 0.0.0.0:8080

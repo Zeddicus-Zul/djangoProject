@@ -42,3 +42,17 @@ htmlcov/
 __pycache__/
 *.py[cod]
 
+# Personal files
+jamesAdvice.txt
+secret_settings.py
+build_instructions.txt
+dev.sh
+prod.sh
+project_status.txt
+projectRequirements.pdf
+update_requirements.sh
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+

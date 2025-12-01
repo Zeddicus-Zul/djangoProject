@@ -39,15 +39,14 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-### 3. Install required packages
+
+### 3. Install all required packages
 ```
-pip install Django Pillow
+pip install -r requirements.txt
 ```
 
-### 4. Run the developer server
-```
-python3 manage.py runserver
-```
+### 4. Build & Run Instructions
+See `build_instructions.txt` in the project root for full details on running in development, production, and deploying to GCP/Cloud Run.
 
 # Usage
 
