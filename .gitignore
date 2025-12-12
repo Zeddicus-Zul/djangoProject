@@ -46,8 +46,6 @@ __pycache__/
 jamesAdvice.txt
 secret_settings.py
 build_instructions.txt
-dev.sh
-prod.sh
 project_status.txt
 projectRequirements.pdf
 update_requirements.sh
