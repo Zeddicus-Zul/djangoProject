@@ -14,7 +14,8 @@ ALLOWED_HOSTS = [
     "gun-sounds-app-1096649553455.us-west1.run.app",
 ]
 
-# --- Use SQLite for local VM testing ---
+# Database - use Cloud SQL connector in production
+# For now using SQLite for testing, update this when Cloud SQL is ready
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -22,25 +23,32 @@ DATABASES = {
     }
 }
 
-# --- Use local storage for static and media files for testing ---
+# --- Google Cloud Storage Configuration ---
+GS_PROJECT_ID = "portfoliosite-468605"
+GS_STATIC_BUCKET_NAME = "portfoliosite-static-files"
+GS_MEDIA_BUCKET_NAME = "portfoliosite-media-files"
+GS_QUERYSTRING_AUTH = False  # Don't require signed URLs for public files
+GS_DEFAULT_ACL = "publicRead"  # Make files publicly accessible
+GS_FILE_OVERWRITE = False  # Don't overwrite files with same name
+
+# Static and Media URLs from GCS
+STATIC_URL = f"https://storage.googleapis.com/{GS_STATIC_BUCKET_NAME}/"
+MEDIA_URL = f"https://storage.googleapis.com/{GS_MEDIA_BUCKET_NAME}/"
+
+# Configure storage backends to use GCS
 STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    "default": {  # For media files (user uploads, images, audio)
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
         "OPTIONS": {
-            "location": BASE_DIR / "media",
+            "bucket_name": GS_MEDIA_BUCKET_NAME,
+            "project_id": GS_PROJECT_ID,
         },
     },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    "staticfiles": {  # For static files (CSS, JS)
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "OPTIONS": {
+            "bucket_name": GS_STATIC_BUCKET_NAME,
+            "project_id": GS_PROJECT_ID,
+        },
     },
 }
-
-STATIC_URL = "/static/"
-MEDIA_URL = "/media/"
-
-# --- GCS storage config (commented out for now) ---
-# GS_PROJECT_ID = "portfoliosite-468605"
-# GS_STATIC_BUCKET_NAME = "portfoliosite_static_bucket"
-# GS_MEDIA_BUCKET_NAME = "portfoliosite_media_bucket"
-# GS_QUERYSTRING_AUTH = False
-# STORAGES = { ... }
