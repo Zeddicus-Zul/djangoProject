@@ -28,7 +28,7 @@ GS_PROJECT_ID = "portfoliosite-468605"
 GS_STATIC_BUCKET_NAME = "portfoliosite-static-files"
 GS_MEDIA_BUCKET_NAME = "portfoliosite-media-files"
 GS_QUERYSTRING_AUTH = False  # Don't require signed URLs for public files
-GS_DEFAULT_ACL = "publicRead"  # Make files publicly accessible
+GS_DEFAULT_ACL = None  # Use bucket-level permissions (uniform bucket-level access)
 GS_FILE_OVERWRITE = False  # Don't overwrite files with same name
 
 # Static and Media URLs from GCS
