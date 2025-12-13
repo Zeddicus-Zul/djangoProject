@@ -4,7 +4,7 @@ substitutions:
   _REGION: us-west1
   _SERVICE_NAME: gun-sounds-app
   _SERVICE_ACCOUNT: 1096649553455-compute@developer.gserviceaccount.com   # your SA email
-  _CLOUDSQL: portfoliosite-468605:us-west1:portfoliosite-database         # instance connection name
+  _CLOUDSQL: portfoliosite-468605:us-west2:portfoliosite-database         # instance connection name
   _DB_NAME: gun_sounds_db
   _DB_USER: gun_sounds_user
 
@@ -56,7 +56,7 @@ steps:
           --service-account $_SERVICE_ACCOUNT \
           --command=python \
           --args=manage.py,migrate \
-          --set-env-vars=DB_NAME=$_DB_NAME,DB_USER=$_DB_USER \
+          --set-env-vars=DB_NAME=$_DB_NAME,DB_USER=$_DB_USER,DB_HOST=/cloudsql/$_CLOUDSQL,DB_PORT= \
           --set-secrets=django_settings=django_settings:latest,DB_PASSWORD=db-password:latest \
           --set-cloudsql-instances=$_CLOUDSQL
         gcloud run jobs execute run-migrations --region=$_REGION --wait
@@ -72,6 +72,6 @@ steps:
         '--allow-unauthenticated',
         '--service-account','$_SERVICE_ACCOUNT',
         '--add-cloudsql-instances','$_CLOUDSQL',
-        '--set-env-vars','DB_NAME=$_DB_NAME,DB_USER=$_DB_USER',
+        '--set-env-vars','DB_NAME=$_DB_NAME,DB_USER=$_DB_USER,DB_HOST=/cloudsql/$_CLOUDSQL,DB_PORT=',
         '--set-secrets','django_settings=django_settings:latest,DB_PASSWORD=db-password:latest'
       ]

@@ -15,11 +15,14 @@ ALLOWED_HOSTS = [
 ]
 
 # Database - use Cloud SQL connector in production
-# For now using SQLite for testing, update this when Cloud SQL is ready
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME", "postgres"),
+        "USER": os.getenv("DB_USER", "postgres"),
+        "PASSWORD": os.getenv("DB_PASSWORD", ""),
+        "HOST": os.getenv("DB_HOST", "127.0.0.1"),
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
 
@@ -29,7 +32,7 @@ GS_STATIC_BUCKET_NAME = "portfoliosite-static-files"
 GS_MEDIA_BUCKET_NAME = "portfoliosite-media-files"
 GS_QUERYSTRING_AUTH = False  # Don't require signed URLs for public files
 GS_DEFAULT_ACL = None  # Use bucket-level permissions (uniform bucket-level access)
-GS_FILE_OVERWRITE = False  # Don't overwrite files with same name
+GS_FILE_OVERWRITE = True  # Overwrite files with same name
 
 # Static and Media URLs from GCS
 STATIC_URL = f"https://storage.googleapis.com/{GS_STATIC_BUCKET_NAME}/"
