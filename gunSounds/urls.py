@@ -5,7 +5,16 @@ from django.urls import path
 
 
 urlpatterns = [
-    path('', views.sound_list, name='sound_list'),
+    path('', views.home, name='home'),
+    path('about/', views.about, name='about'),
+    path('contact/', views.contact, name='contact'),
+    path('join/', views.join, name='join'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('quiz/', views.quiz, name='quiz'),
+    path('save_score/', views.save_score, name='save_score'),
+    path('server_info/', views.server_info, name='server_info'),
+    path('sounds/', views.sound_list, name='sound_list'),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz - Gun Sounds</title>
+    {% load static %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'gunSounds/styles.css' %}" />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .quiz-section {
+            padding: 40px 20px;
+        }
+
+        .quiz-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .distance-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            justify-content: center;
+        }
+
+        .distance-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #333;
+            color: white;
+            border: 2px solid #333;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .distance-btn:hover {
+            background-color: #555;
+            border-color: #555;
+        }
+
+        .distance-btn.active {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .quiz-game {
+            display: none;
+        }
+
+        .quiz-game.active {
+            display: block;
+        }
+
+        .play-sound-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+        }
+
+        .play-sound-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-sound-btn:hover {
+            background-color: #0b5ed7;
+            transform: scale(1.05);
+        }
+
+        .play-sound-btn:active {
+            transform: scale(0.95);
+        }
+
+        .prompt {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #ccc;
+        }
+
+        .weapons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .weapon-btn {
+            padding: 20px;
+            font-size: 1rem;
+            background-color: #444;
+            color: white;
+            border: 2px solid #555;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .weapon-btn:hover:not(.correct):not(.incorrect) {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+
+        .weapon-btn.correct {
+            background-color: #28a745;
+            border-color: #28a745;
+            animation: pulse 0.5s ease;
+        }
+
+        .weapon-btn.incorrect {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            animation: shake 0.3s ease;
+        }
+
+        .weapon-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .no-distance-selected {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #0d6efd;
+        }
+
+        .filter-buttons {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .filter-buttons button {
+            margin: 5px;
+            padding: 8px 15px;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-buttons button:hover {
+            background-color: #555;
+            border-color: #777;
+        }
+
+        .filter-buttons button.active {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        footer {
+            background-color: #212529;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'quiz' %}">Quiz</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout ({{user.username}})</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin" target="_blank">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="quiz-section">
+            <div class="quiz-container">
+                <h1>Find the weapon</h1>
+
+                <div class="distance-buttons">
+                    {% for distance in distances %}
+                    <a href="{% url 'quiz' %}?distance={{ distance }}" onclick="localStorage.removeItem('quizScore');"
+                        class="distance-btn {% if distance == selected_distance %}active{% endif %}">
+                        {{ distance }}
+                    </a>
+                    {% endfor %}
+                </div>
+
+                {% if selected_distance and current_audio %}
+                <div class="quiz-game active">
+                    <div class="score-display">
+                        <span>Score: <span id="score">0</span></span>
+                        {% if user.is_authenticated %}
+                        <span style="margin-left: 30px;">High Score: <span id="highScore">{{ user_high_score }}</span></span>
+                        {% endif %}
+                    </div>
+
+                    <div class="play-sound-section">
+                        <p class="prompt">Listen and identify the weapon:</p>
+                        <button class="play-sound-btn" id="playBtn" onclick="playSound()">
+                            🔊 Play Sound
+                        </button>
+                        <audio id="audioElement"
+                            src="https://storage.googleapis.com/portfoliosite-media-files/{{ current_audio.audio_file }}"></audio>
+                    </div>
+
+                    <div class="weapons-grid" id="weaponsGrid">
+                        {% for gun in guns %}
+                        <button class="weapon-btn" onclick="guessWeapon(this, {{ gun.id }}, {{ correct_gun_id }})">
+                            {{ gun.name }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% elif selected_distance %}
+                <div class="no-distance-selected">
+                    <p>No weapons available at this distance yet.</p>
+                </div>
+                {% else %}
+                <div class="no-distance-selected">
+                    <p>👆 Select a distance above to begin the quiz</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let score = localStorage.getItem('quizScore') ? parseInt(localStorage.getItem('quizScore')) : 0;
+        let correctGunsId = {{ correct_gun_id }};
+        
+        // Get CSRF token from cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Save score to database
+        function saveScoreToDB() {
+            if (score > 0 && {{ user.is_authenticated|yesno:"true,false" }}) {
+                const csrftoken = getCookie('csrftoken');
+                
+                fetch('{% url "save_score" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: 'score=' + encodeURIComponent(score),
+                    keepalive: true
+                }).catch(err => console.log('Score save failed:', err));
+            }
+        }
+        
+        // Save score when user navigates away
+        window.addEventListener('beforeunload', saveScoreToDB);
+        const selectedDistance = "{{ selected_distance }}";
+
+        // Display score on page load
+        document.getElementById('score').textContent = score;
+
+        function playSound() {
+            const audio = document.getElementById('audioElement');
+            audio.currentTime = 0;
+            audio.play();
+        }
+
+        function guessWeapon(button, gunId, correctGunId) {
+            // Disable all buttons during feedback
+            const allButtons = document.querySelectorAll('.weapon-btn');
+            allButtons.forEach(btn => btn.disabled = true);
+
+            if (gunId === correctGunId) {
+                // Correct guess
+                button.classList.add('correct');
+                score++;
+                localStorage.setItem('quizScore', score);
+                document.getElementById('score').textContent = score;
+
+                // Load next audio after a delay
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                // Incorrect guess
+                button.classList.add('incorrect');
+
+                // Re-enable buttons after shake animation
+                setTimeout(() => {
+                    allButtons.forEach(btn => btn.disabled = false);
+                    button.classList.remove('incorrect');
+                }, 300);
+            }
+        }
+
+        // Auto-play first sound when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                playSound();
+            }, 500);
+        });
+    </script>
+</body>
+
+<!-- Footer -->
+<footer>
+    <p>Created by Jordan Bailey</p>
+</footer>
+
+</html>

@@ -3,8 +3,11 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gun Sounds</title>
     {% load static %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'gunSounds/styles.css' %}" />
     <style>
         /* Styling for the filter buttons */
@@ -34,7 +37,48 @@
 </head>
 
 <body>
-    <h1>Gun Sounds</h1>
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'quiz' %}">Quiz</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout ({{user.username}})</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin" target="_blank">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Gun Sounds Library</h1>
 
     <div class="filter-bar">
         <div class="filter-buttons">
@@ -79,22 +123,32 @@
         {% for gun in guns %}
             <div class="gun-box">
                 <h2>{{ gun.name }}</h2>
-                <img src="{{ gun.image.url }}" width="400" height="auto" alt="{{ gun.name }}" />
+                {% if gun.image %}
+                    <img src="{{ gun.image.url }}" width="400" height="auto" alt="{{ gun.name }}" />
+                {% endif %}
 
                 <div class="buttons">
                     {% for clip in gun.audio_clips.all %}
-                        <button onclick="document.getElementById('audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}').play()">
-                            {{ clip.label }}
-                        </button>
+                        {% if clip.audio_file %}
+                            <button onclick="document.getElementById('audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}').play()">
+                                {{ clip.label }}
+                            </button>
+                        {% endif %}
                     {% endfor %}
                 </div>
 
                 {% for clip in gun.audio_clips.all %}
-                    <audio id="audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" src="{{ clip.audio_file.url }}"></audio>
+                    {% if clip.audio_file %}
+                        <audio id="audio-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" src="{{ clip.audio_file.url }}"></audio>
+                    {% endif %}
                 {% endfor %}
             </div>
         {% endfor %}
     </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

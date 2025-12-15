@@ -12,6 +12,20 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "gun-sounds-app-1096649553455.us-west1.run.app",
+    "zeddstudy.dev",
+    "www.zeddstudy.dev",
+]
+
+# Security settings for production with custom domain
+CSRF_COOKIE_SECURE = True  # Send CSRF cookie only over HTTPS
+SESSION_COOKIE_SECURE = True  # Send session cookie only over HTTPS
+SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Trust Cloud Run's HTTPS headers
+
+# Configure trusted origins for CSRF
+CSRF_TRUSTED_ORIGINS = [
+    "https://zeddstudy.dev",
+    "https://www.zeddstudy.dev",
 ]
 
 # Database - use Cloud SQL connector in production
