@@ -14,3 +14,4 @@ echo "Pushing to Artifact Registry..."
 docker push ${REGISTRY}:latest
 
 echo "✅ Image built and pushed: ${REGISTRY}:latest"
+echo "Nice!" 

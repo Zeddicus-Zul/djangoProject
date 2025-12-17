@@ -3,6 +3,7 @@ from .models import Gun, AudioClip, Score
 
 class AudioClipInline(admin.TabularInline):
     model = AudioClip
+    extra = 0
 
 class GunAdmin(admin.ModelAdmin):
     inlines = [AudioClipInline]

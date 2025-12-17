@@ -288,6 +288,22 @@
                     {% endfor %}
                 </div>
 
+                <div class="filter-buttons">
+                    <span>Ammo Type:</span>
+                    <button
+                        onclick="window.location.href = `{% url 'quiz' %}?distance={{ selected_distance }}&size={{ selected_size }}`"
+                        class="{% if not selected_ammo_type %}active{% endif %}"
+                    >
+                        All
+                    </button>
+                    <button
+                        onclick="window.location.href = `{% url 'quiz' %}?distance={{ selected_distance }}&ammo_type=Shotgun&size={{ selected_size }}`"
+                        class="{% if selected_ammo_type == 'Shotgun' %}active{% endif %}"
+                    >
+                        Shotgun
+                    </button>
+                </div>
+
                 {% if selected_distance and current_audio %}
                 <div class="quiz-game active">
                     <div class="score-display">
