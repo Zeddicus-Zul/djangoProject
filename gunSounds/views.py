@@ -46,9 +46,9 @@ def quiz(request):
         guns_query = Gun.objects.filter(audio_clips__distance=selected_distance).distinct()
         
         if selected_ammo_type:
-            guns_query = guns_query.filter(ammo_type=selected_ammo_type)
+            guns_query = guns_query.filter(ammo_type__iexact=selected_ammo_type)
         if selected_size:
-            guns_query = guns_query.filter(size=selected_size)
+            guns_query = guns_query.filter(size__iexact=selected_size)
         
         guns_at_distance = guns_query
         audio_clips = AudioClip.objects.filter(distance=selected_distance, gun__in=guns_at_distance)
@@ -78,9 +78,9 @@ def sound_list(request):
     selected_size = request.GET.get('size')
 
     if selected_ammo_type:
-        guns = guns.filter(ammo_type=selected_ammo_type)
+        guns = guns.filter(ammo_type__iexact=selected_ammo_type)
     if selected_size:
-        guns = guns.filter(size=selected_size)
+        guns = guns.filter(size__iexact=selected_size)
 
     all_ammo_types = Gun.objects.values_list('ammo_type', flat=True).distinct().order_by('ammo_type')
     all_sizes = Gun.objects.values_list('size', flat=True).distinct().order_by('size')

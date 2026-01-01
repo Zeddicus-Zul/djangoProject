@@ -288,22 +288,6 @@
                     {% endfor %}
                 </div>
 
-                <div class="filter-buttons">
-                    <span>Ammo Type:</span>
-                    <button
-                        onclick="window.location.href = `{% url 'quiz' %}?distance={{ selected_distance }}&size={{ selected_size }}`"
-                        class="{% if not selected_ammo_type %}active{% endif %}"
-                    >
-                        All
-                    </button>
-                    <button
-                        onclick="window.location.href = `{% url 'quiz' %}?distance={{ selected_distance }}&ammo_type=Shotgun&size={{ selected_size }}`"
-                        class="{% if selected_ammo_type == 'Shotgun' %}active{% endif %}"
-                    >
-                        Shotgun
-                    </button>
-                </div>
-
                 {% if selected_distance and current_audio %}
                 <div class="quiz-game active">
                     <div class="score-display">
@@ -354,6 +338,11 @@
     <script>
         let score = localStorage.getItem('quizScore') ? parseInt(localStorage.getItem('quizScore')) : 0;
         let correctGunsId = {{ correct_gun_id }};
+
+        // Log correct answer to console (secret cheat - open DevTools with F12)
+        {% if current_audio %}
+        console.log("🔊 Correct answer: {{ current_audio.gun.name }}");
+        {% endif %}
         
         // Get CSRF token from cookie
         function getCookie(name) {
@@ -437,10 +426,5 @@
         });
     </script>
 </body>
-
-<!-- Footer -->
-<footer>
-    <p>Created by Jordan Bailey</p>
-</footer>
 
 </html>

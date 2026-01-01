@@ -2,18 +2,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from django.shortcuts import redirect
-from gunSounds import views as gunSounds_views
+from django.shortcuts import render
 
-def redirect_root(request):
-    return redirect('/gunSounds/')
+def landing(request):
+    return render(request, 'landing.html')
 
 
 urlpatterns = [
-    path("", redirect_root),
-    path("gunSounds/", include("gunSounds.urls")),
+    path("", landing),
+    path("gunsounds/", include("gunSounds.urls")),
     path("admin/", admin.site.urls),
-    path("server_info/", gunSounds_views.server_info),
+    path("server_info/", include("gunSounds.urls")),
 ]
 
 # Serve media files in development

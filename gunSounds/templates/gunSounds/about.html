@@ -18,11 +18,20 @@
 
         main {
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .about-section {
-            padding: 60px 20px;
-            background-color: #f8f9fa;
+            padding: 40px 20px 60px 40px;
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65)), url("{% static 'gunSounds/images/sniper.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            width: 100%;
         }
 
         .about-section h1 {
@@ -44,12 +53,14 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            margin: 0;
+            max-width: 500px;
         }
 
         .about-card h2 {
             color: #680e0e;
             margin-bottom: 15px;
+            text-align: center;
         }
 
         footer {
@@ -105,18 +116,14 @@
 
     <main>
         <section class="about-section">
-            <div class="container">
-                <h1>About Gun Sounds Library</h1>
-
-                <div class="about-card">
-                    <h2>My Mission</h2>
-                    <p>
-                        This library was created as a personal project so that I could identify any weapon during a
-                        Bounty
-                        match in Hunt Showdown. It was also a way for me to learn more about full stack web development.
-                        I hope that this library can be of use to others who are looking to improve their game.
-                    </p>
-                </div>
+            <div class="about-card">
+                <h2>My Mission</h2>
+                <p>
+                    This library was created as a personal project so that I could identify any weapon during a
+                    Bounty
+                    match in Hunt Showdown. It was also a way for me to learn more about full stack web development.
+                    I hope that this library can be of use to others who are looking to improve their game.
+                </p>
             </div>
         </section>
     </main>

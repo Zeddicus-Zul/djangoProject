@@ -7,11 +7,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Install dependencies including netcat for Cloud SQL Proxy check
-RUN apt-get update && \
-    apt-get install -y netcat-openbsd curl && \
-    rm -rf /var/lib/apt/lists/*
-
 # Install Python dependencies
 COPY requirements.txt .
 RUN python -m pip install --upgrade pip && \
