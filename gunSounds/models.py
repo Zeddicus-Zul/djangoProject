@@ -34,3 +34,15 @@ class Score(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - High Score: {self.high_score}"
+
+
+class MapMarker(models.Model):
+    name = models.CharField(max_length=200)
+    map_name = models.CharField(max_length=100, default='stillwater')
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    marker_type = models.CharField(max_length=50, default='spawn')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.name} ({self.map_name})"

@@ -21,7 +21,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     box-sizing: border-box;
 }
 
@@ -34,17 +34,30 @@
 }
 
 
+/* Buttons container styling */
+.buttons {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto;
+    padding-bottom: 10px;
+}
+
 /* Buttons styling */
 .buttons button {
-    margin: 5px 5px 0 0;
-    padding: 6px 12px;
-    font-size: 14px;
+    margin: 0;
+    padding: 5px 8px;
+    font-size: 13px;
     background-color: #444;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .buttons button:hover {

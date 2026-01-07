@@ -27,7 +27,7 @@
             flex: 1;
             display: flex;
             align-items: flex-start;
-            justify-content: flex-start;
+            justify-content: flex-end;
             background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65)), url("{% static 'gunSounds/images/sniper.jpg' %}");
             background-size: cover;
             background-position: center;
@@ -92,6 +92,9 @@
                         <a class="nav-link" href="{% url 'quiz' %}">Quiz</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'map' %}">Map</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" href="{% url 'about' %}">About</a>
                     </li>
                     <li class="nav-item">
@@ -117,7 +120,7 @@
     <main>
         <section class="about-section">
             <div class="about-card">
-                <h2>My Mission</h2>
+                <h2>My Goal</h2>
                 <p>
                     This library was created as a personal project so that I could identify any weapon during a
                     Bounty
