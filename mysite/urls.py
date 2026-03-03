@@ -14,7 +14,8 @@ def healthz(request):
 
 
 urlpatterns = [
-    path("healthz", healthz, name="healthz"),
+    path("healthz", healthz, name="healthz"),       # MIG health check (intercepted on Cloud Run)
+    path("-/health", healthz, name="health_alt"),    # Alternative path (works everywhere)
     path("", landing),
     path("gunsounds/", include("gunSounds.urls")),
     path("admin/", admin.site.urls),
