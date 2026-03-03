@@ -19,7 +19,12 @@ ALLOWED_HOSTS = [
 # Security settings for production with custom domain
 CSRF_COOKIE_SECURE = True  # Send CSRF cookie only over HTTPS
 SESSION_COOKIE_SECURE = True  # Send session cookie only over HTTPS
-SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+
+# NOTE: SECURE_SSL_REDIRECT is disabled so that GCP health-check probes
+# (plain HTTP on port 8080) receive a 200 instead of a 301 redirect.
+# Cloudflare or the GCP LB should enforce HTTPS for real user traffic.
+SECURE_SSL_REDIRECT = False
+
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Trust Cloud Run's HTTPS headers
 
 # Configure trusted origins for CSRF

@@ -1,0 +1,27 @@
+[Unit]
+Description=Gunicorn daemon for huntProject Django app
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/huntProject
+Environment="DJANGO_SETTINGS_MODULE=mysite.settings.prod"
+Environment="RUNNING_IN_CLOUD_RUN=false"
+# Add any other env vars your prod settings need:
+# Environment="DB_NAME=postgres"
+# Environment="DB_USER=postgres"
+# Environment="DB_PASSWORD=changeme"
+# Environment="DB_HOST=127.0.0.1"
+ExecStart=/opt/huntProject/venv/bin/gunicorn \
+    --bind 0.0.0.0:8080 \
+    --workers 2 \
+    --timeout 120 \
+    --access-logfile - \
+    --error-logfile - \
+    mysite.wsgi:application
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

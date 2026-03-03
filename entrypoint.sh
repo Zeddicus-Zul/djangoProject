@@ -1,7 +1,18 @@
 #!/bin/sh
 set -e
 
-export RUNNING_IN_CLOUD_RUN=true
+# Detect environment: Cloud Run sets K_SERVICE automatically.
+# On Compute Engine / MIG, set DJANGO_SETTINGS_MODULE via instance metadata or env.
+if [ -n "$K_SERVICE" ]; then
+  export RUNNING_IN_CLOUD_RUN=true
+  echo "Detected Cloud Run (service: $K_SERVICE)"
+else
+  export RUNNING_IN_CLOUD_RUN=false
+  echo "Not running in Cloud Run (Compute Engine / local)"
+fi
+
+# Use prod settings unless explicitly overridden
+export DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE:-mysite.settings.prod}"
 
 echo "Running Django migrations..."
 python manage.py migrate --noinput
