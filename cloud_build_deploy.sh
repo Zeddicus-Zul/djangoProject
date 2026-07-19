@@ -4,7 +4,7 @@ set -e
 # Configuration
 PROJECT_ID=${PROJECT_ID:-portfoliosite-468605}
 REGION=${REGION:-us-west1}
-SERVICE_NAME=${SERVICE_NAME:-gun-sounds}
+SERVICE_NAME=${SERVICE_NAME:-gun-sounds-app}
 IMAGE_NAME=${IMAGE_NAME:-gun-sounds}
 REPO=${REPO:-gun-sounds}
 
@@ -30,6 +30,7 @@ gcloud builds submit --tag ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${IMAG
 echo "Build complete! Image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${IMAGE_NAME}:latest"
 echo ""
 echo "Deploying to Cloud Run..."
+echo "Note: Using existing Cloud Run configuration (env vars, secrets, Cloud SQL)"
 gcloud run deploy ${SERVICE_NAME} \
   --image ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${IMAGE_NAME}:latest \
   --region ${REGION} \
