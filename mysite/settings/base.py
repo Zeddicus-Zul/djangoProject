@@ -83,7 +83,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT", "portfoliosite-468605")
-VERTEX_AI_LOCATION = os.getenv("VERTEX_AI_LOCATION", "us-central1")
+VERTEX_AI_LOCATION = os.getenv("VERTEX_AI_LOCATION", "global")
 
 # Password validators (kept same as before)
 AUTH_PASSWORD_VALIDATORS = [

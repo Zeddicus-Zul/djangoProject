@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def generate_movie_night_image():
     import anthropic
     from google import genai
-    from google.genai.types import GenerateImagesConfig
+    from google.genai.types import GenerateContentConfig
 
     titles = list(MovieSuggestion.objects.values_list("title", flat=True))
     if not titles:
@@ -37,12 +37,16 @@ def generate_movie_night_image():
         project=settings.GOOGLE_CLOUD_PROJECT,
         location=settings.VERTEX_AI_LOCATION,
     )
-    result = client.models.generate_images(
-        model="imagen-3.0-generate-002",
-        prompt=image_prompt,
-        config=GenerateImagesConfig(number_of_images=1),
+    result = client.models.generate_content(
+        model="gemini-2.5-flash-image",
+        contents=image_prompt,
+        config=GenerateContentConfig(response_modalities=["TEXT", "IMAGE"]),
     )
-    image_bytes = result.generated_images[0].image.image_bytes
+    image_bytes = next(
+        part.inline_data.data
+        for part in result.candidates[0].content.parts
+        if part.inline_data is not None
+    )
 
     movie_image = MovieNightImage(prompt_used=image_prompt)
     movie_image.image.save("movienight.png", ContentFile(image_bytes), save=True)
