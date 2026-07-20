@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MovieSuggestion
+from .models import MovieSuggestion, MovieNightImage
 
 
 class MovieSuggestionAdmin(admin.ModelAdmin):
@@ -7,4 +7,10 @@ class MovieSuggestionAdmin(admin.ModelAdmin):
     search_fields = ('title',)
 
 
+class MovieNightImageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'generated_at')
+    readonly_fields = ('prompt_used',)
+
+
 admin.site.register(MovieSuggestion, MovieSuggestionAdmin)
+admin.site.register(MovieNightImage, MovieNightImageAdmin)

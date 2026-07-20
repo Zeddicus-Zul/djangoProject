@@ -133,8 +133,13 @@
             {% endif %}
 
             <div class="movie-image">
+                {% if movie_image %}
+                <img src="{{ movie_image.image.url }}" alt="AI-generated image based on the group's movie picks">
+                <p>Generated from the current list of suggestions.</p>
+                {% else %}
                 <img src="{% static 'movienight/placeholder.svg' %}" alt="Movie night placeholder image">
-                <p>A future picture inspired by the group's picks will appear here.</p>
+                <p>Once suggestions come in, an AI-generated image based on them will appear here.</p>
+                {% endif %}
             </div>
 
             <a href="/" class="back-link">&larr; Back to portfolio</a>
