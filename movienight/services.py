@@ -2,6 +2,7 @@ import logging
 
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.utils import timezone
 
 from .models import MovieNightImage, MovieSuggestion
 
@@ -48,5 +49,6 @@ def generate_movie_night_image():
         if part.inline_data is not None
     )
 
+    filename = f"movienight-{timezone.now():%Y%m%d%H%M%S%f}.png"
     movie_image = MovieNightImage(prompt_used=image_prompt)
-    movie_image.image.save("movienight.png", ContentFile(image_bytes), save=True)
+    movie_image.image.save(filename, ContentFile(image_bytes), save=True)
