@@ -26,12 +26,14 @@ def generate_movie_night_image():
             "You write vivid, single-paragraph prompts for an AI image generator. "
             "Given a list of movie titles suggested by a group for movie night, "
             "write one descriptive image prompt for a poster-style collage that "
-            "captures the mood and variety of the list. Do not render the titles "
-            "as literal text in the image. Respond with only the prompt, no preamble."
+            "captures the mood and variety of the list. The image must be purely "
+            "visual, with no text, words, letters, titles, captions, or typography "
+            "of any kind anywhere in the scene. Respond with only the prompt, no preamble."
         ),
         messages=[{"role": "user", "content": ", ".join(titles)}],
     )
     image_prompt = next(b.text for b in prompt_response.content if b.type == "text")
+    image_prompt += " No text, words, letters, or typography anywhere in the image."
 
     client = genai.Client(
         vertexai=True,
