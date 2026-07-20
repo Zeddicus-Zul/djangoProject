@@ -9,7 +9,7 @@ urlpatterns = [
     path("healthz", views.healthz, name="healthz"),       # MIG health check (intercepted on Cloud Run)
     path("-/health", views.healthz, name="health_alt"),    # Alternative path (works everywhere)
     path("", views.landing, name="landing"),
-    path("movienight/", views.movie_night, name="movie_night"),
+    path("movienight/", include("movienight.urls")),
     path("gunsounds/", include("gunSounds.urls")),
     path("admin/", admin.site.urls),
 ]

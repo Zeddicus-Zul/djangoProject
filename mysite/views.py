@@ -10,9 +10,9 @@ PROJECTS = [
     },
     {
         "title": "Movie Night",
-        "description": "Vote on movies and get an AI-generated poster for movie night. Coming soon.",
+        "description": "Suggest movies for movie night.",
         "url": "/movienight/",
-        "available": False,
+        "available": True,
     },
 ]
 
@@ -24,7 +24,3 @@ def landing(request):
 def healthz(request):
     """Lightweight health-check endpoint for GCP load-balancer probes."""
     return HttpResponse("ok", content_type="text/plain", status=200)
-
-
-def movie_night(request):
-    return render(request, "movie_night.html")
