@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" role="img" aria-label="Generic movie night placeholder image">
+    <rect x="0" y="0" width="240" height="180" rx="12" fill="#1a1a1a" />
+
+    <!-- clapperboard body -->
+    <rect x="30" y="70" width="180" height="90" rx="8" fill="#2d2d2d" stroke="#680e0e" stroke-width="3" />
+
+    <!-- clapperboard top bar -->
+    <g>
+        <rect x="30" y="45" width="180" height="30" rx="6" fill="#2d2d2d" stroke="#680e0e" stroke-width="3" transform="rotate(-6 120 60)" />
+        <g transform="rotate(-6 120 60)" fill="#ffffff">
+            <rect x="38" y="47" width="16" height="26" />
+            <rect x="66" y="47" width="16" height="26" />
+            <rect x="94" y="47" width="16" height="26" />
+            <rect x="122" y="47" width="16" height="26" />
+            <rect x="150" y="47" width="16" height="26" />
+            <rect x="178" y="47" width="16" height="26" />
+        </g>
+    </g>
+
+    <!-- play triangle -->
+    <polygon points="108,105 108,140 140,122" fill="#680e0e" />
+</svg>
