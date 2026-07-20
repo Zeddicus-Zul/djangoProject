@@ -25,10 +25,14 @@ def generate_movie_night_image():
         system=(
             "You write vivid, single-paragraph prompts for an AI image generator. "
             "Given a list of movie titles suggested by a group for movie night, "
-            "write one descriptive image prompt for a poster-style collage that "
-            "captures the mood and variety of the list. The image must be purely "
-            "visual, with no text, words, letters, titles, captions, or typography "
-            "of any kind anywhere in the scene. Respond with only the prompt, no preamble."
+            "write one descriptive image prompt for a single cohesive scene that "
+            "blends the mood and imagery of every title together like one continuous "
+            "artist's painting. Elements from different movies should meld into each "
+            "other with soft, dreamlike transitions — there must be no hard edges, "
+            "panels, quadrants, or clearly separated zones on the page. The image must "
+            "be purely visual, with no text, words, letters, titles, captions, or "
+            "typography of any kind anywhere in the scene. Respond with only the "
+            "prompt, no preamble."
         ),
         messages=[{"role": "user", "content": ", ".join(titles)}],
     )
