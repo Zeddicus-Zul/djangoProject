@@ -1,5 +1,4 @@
 import logging
-import threading
 
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -15,6 +14,9 @@ def _get_session_key(request):
 
 
 def _generate_image_safely():
+    # Run synchronously within the request — Cloud Run throttles CPU once a
+    # response is sent, so a background thread here would get starved/killed
+    # before finishing (confirmed: zero log output, not even the exception).
     from .services import generate_movie_night_image
     try:
         generate_movie_night_image()
@@ -37,7 +39,7 @@ def add_suggestion(request):
         title = request.POST.get("title", "").strip()
         if title:
             MovieSuggestion.objects.create(title=title[:200], session_key=_get_session_key(request))
-            threading.Thread(target=_generate_image_safely, daemon=True).start()
+            _generate_image_safely()
     return redirect("movienight:movie_night")
 
 
