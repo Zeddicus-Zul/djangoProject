@@ -30,7 +30,8 @@ def movie_night(request):
         {"obj": s, "is_owner": s.session_key == session_key}
         for s in MovieSuggestion.objects.order_by("-created_at")
     ]
-    movie_image = MovieNightImage.objects.order_by("-generated_at").first()
+    # Don't show a stale image once the list it was generated from is empty.
+    movie_image = MovieNightImage.objects.order_by("-generated_at").first() if suggestions else None
     return render(request, "movienight/movie_night.html", {"suggestions": suggestions, "movie_image": movie_image})
 
 
@@ -52,6 +53,7 @@ def edit_suggestion(request, pk):
         if title:
             suggestion.title = title[:200]
             suggestion.save()
+            _generate_image_safely()
         return redirect("movienight:movie_night")
     return render(request, "movienight/edit_suggestion.html", {"suggestion": suggestion})
 
@@ -60,4 +62,5 @@ def delete_suggestion(request, pk):
     suggestion = get_object_or_404(MovieSuggestion, pk=pk)
     if request.method == "POST" and suggestion.session_key == request.session.session_key:
         suggestion.delete()
+        _generate_image_safely()
     return redirect("movienight:movie_night")
