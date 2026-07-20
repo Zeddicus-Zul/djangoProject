@@ -85,11 +85,13 @@
         .movie-image {
             text-align: center;
             margin-top: 40px;
+            padding: 0 20px;
         }
 
         .movie-image img {
-            max-width: 240px;
             width: 100%;
+            max-width: 1400px;
+            height: auto;
             border-radius: 12px;
             border: 2px solid #680e0e;
         }
@@ -131,19 +133,19 @@
             {% else %}
                 <p class="empty-state">No suggestions yet &mdash; be the first!</p>
             {% endif %}
-
-            <div class="movie-image">
-                {% if movie_image %}
-                <img src="{{ movie_image.image.url }}" alt="AI-generated image based on the group's movie picks">
-                <p>Generated from the current list of suggestions.</p>
-                {% else %}
-                <img src="{% static 'movienight/placeholder.svg' %}" alt="Movie night placeholder image">
-                <p>Once suggestions come in, an AI-generated image based on them will appear here.</p>
-                {% endif %}
-            </div>
-
-            <a href="/" class="back-link">&larr; Back to portfolio</a>
         </div>
+
+        <div class="movie-image">
+            {% if movie_image %}
+            <img src="{{ movie_image.image.url }}" alt="AI-generated image based on the group's movie picks">
+            <p>Generated from the current list of suggestions.</p>
+            {% else %}
+            <img src="{% static 'movienight/placeholder.svg' %}" alt="Movie night placeholder image">
+            <p>Once suggestions come in, an AI-generated image based on them will appear here.</p>
+            {% endif %}
+        </div>
+
+        <a href="/" class="back-link">&larr; Back to portfolio</a>
     </main>
 
     <footer>Work In Progress</footer>
