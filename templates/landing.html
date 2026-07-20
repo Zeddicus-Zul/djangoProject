@@ -80,6 +80,20 @@
             font-size: 1rem;
         }
 
+        .project-card--soon {
+            opacity: 0.75;
+        }
+
+        .badge-soon {
+            font-size: 0.65rem;
+            font-weight: normal;
+            color: #ccc;
+            border: 1px solid #680e0e;
+            border-radius: 4px;
+            padding: 2px 6px;
+            vertical-align: middle;
+        }
+
         footer {
             background-color: #212529;
             color: white;
@@ -97,10 +111,12 @@
             <p>Aspiring Software Engineer | Game Enthusiast</p>
             
             <div class="projects">
-                <a href="/gunsounds/" class="project-card">
-                    <h3>Gun Sounds Library</h3>
-                    <p>Learn every weapon sound in Hunt Showdown.</p>
+                {% for project in projects %}
+                <a href="{{ project.url }}" class="project-card{% if not project.available %} project-card--soon{% endif %}">
+                    <h3>{{ project.title }}{% if not project.available %} <span class="badge-soon">Coming Soon</span>{% endif %}</h3>
+                    <p>{{ project.description }}</p>
                 </a>
+                {% endfor %}
             </div>
         </div>
     </main>
