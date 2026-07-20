@@ -38,7 +38,7 @@ def generate_movie_night_image():
         location=settings.VERTEX_AI_LOCATION,
     )
     result = client.models.generate_images(
-        model="imagen-4.0-generate-001",
+        model="imagen-3.0-generate-002",
         prompt=image_prompt,
         config=GenerateImagesConfig(number_of_images=1),
     )
