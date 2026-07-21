@@ -269,6 +269,10 @@
                             emptyState.style.display = 'none';
                             suggestionsList.appendChild(buildSuggestionCard(data));
                             regenerateImage();
+                        })
+                        .catch(function (err) {
+                            console.error('Add suggestion failed, falling back to normal submit', err);
+                            addForm.submit();
                         });
                 });
             }
@@ -282,7 +286,7 @@
 
                     fetch(form.action, {
                         method: 'POST',
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken },
                     })
                         .then(function (resp) { return resp.json(); })
                         .then(function (data) {
@@ -293,6 +297,10 @@
                                 emptyState.style.display = 'block';
                             }
                             regenerateImage();
+                        })
+                        .catch(function (err) {
+                            console.error('Delete suggestion failed, falling back to normal submit', err);
+                            form.submit();
                         });
                 });
             }
