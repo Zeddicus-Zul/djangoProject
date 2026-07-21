@@ -101,6 +101,22 @@
             font-size: 0.85rem;
             margin-top: 10px;
         }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            margin: 60px auto;
+            border: 6px solid rgba(255, 255, 255, 0.15);
+            border-top-color: #680e0e;
+            border-radius: 50%;
+            animation: movie-spin 0.8s linear infinite;
+        }
+
+        @keyframes movie-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
@@ -109,20 +125,20 @@
         <div class="container-narrow">
             <h1>Movie Night</h1>
 
-            <form class="add-form" method="post" action="{% url 'movienight:add_suggestion' %}">
+            <form id="add-form" class="add-form" method="post" action="{% url 'movienight:add_suggestion' %}">
                 {% csrf_token %}
                 <input type="text" name="title" class="form-control" placeholder="Suggest a movie..." maxlength="200" required>
                 <button type="submit" class="btn btn-danger">Suggest</button>
             </form>
 
-            {% if suggestions %}
+            <div id="suggestions-list">
                 {% for item in suggestions %}
-                <div class="suggestion-card">
+                <div class="suggestion-card" data-id="{{ item.obj.pk }}">
                     <span>{{ item.obj.title }}</span>
                     {% if item.is_owner %}
                     <div class="actions">
                         <a href="{% url 'movienight:edit_suggestion' item.obj.pk %}" class="btn btn-sm btn-outline-light">Edit</a>
-                        <form method="post" action="{% url 'movienight:delete_suggestion' item.obj.pk %}" onsubmit="return confirm('Delete this suggestion?');">
+                        <form method="post" action="{% url 'movienight:delete_suggestion' item.obj.pk %}" class="delete-form">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                         </form>
@@ -130,25 +146,166 @@
                     {% endif %}
                 </div>
                 {% endfor %}
-            {% else %}
-                <p class="empty-state">No suggestions yet &mdash; be the first!</p>
-            {% endif %}
+            </div>
+            <p id="empty-state" class="empty-state" {% if suggestions %}style="display:none;"{% endif %}>No suggestions yet &mdash; be the first!</p>
         </div>
 
-        <div class="movie-image">
-            {% if movie_image %}
-            <img src="{{ movie_image.image.url }}" alt="AI-generated image based on the group's movie picks">
-            <p>Generated from the current list of suggestions.</p>
-            {% else %}
-            <img src="{% static 'movienight/placeholder.svg' %}" alt="Movie night placeholder image">
-            <p>Once suggestions come in, an AI-generated image based on them will appear here.</p>
-            {% endif %}
+        <div class="movie-image" id="movie-image-section" data-placeholder-url="{% static 'movienight/placeholder.svg' %}">
+            <div class="spinner" id="movie-image-spinner" style="display:none;"></div>
+            <img id="movie-image-img"
+                 src="{% if movie_image %}{{ movie_image.image.url }}{% else %}{% static 'movienight/placeholder.svg' %}{% endif %}"
+                 alt="AI-generated image based on the group's movie picks">
+            <p id="movie-image-caption">
+                {% if movie_image %}Generated from the current list of suggestions.{% else %}Once suggestions come in, an AI-generated image based on them will appear here.{% endif %}
+            </p>
         </div>
 
         <a href="/" class="back-link">&larr; Back to portfolio</a>
     </main>
 
     <footer>Work In Progress</footer>
+
+    <script>
+        (function () {
+            function getCookie(name) {
+                const match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+                return match ? decodeURIComponent(match.pop()) : '';
+            }
+
+            const csrftoken = getCookie('csrftoken');
+            const suggestionsList = document.getElementById('suggestions-list');
+            const emptyState = document.getElementById('empty-state');
+            const addForm = document.getElementById('add-form');
+            const imageImg = document.getElementById('movie-image-img');
+            const imageSpinner = document.getElementById('movie-image-spinner');
+            const imageCaption = document.getElementById('movie-image-caption');
+            const imageSection = document.getElementById('movie-image-section');
+            const placeholderUrl = imageSection.dataset.placeholderUrl;
+            const generateUrl = "{% url 'movienight:trigger_generation' %}";
+
+            function showSpinner() {
+                imageImg.style.display = 'none';
+                imageSpinner.style.display = 'block';
+                imageCaption.textContent = 'Generating a new image from the current list...';
+            }
+
+            function hideSpinner() {
+                imageSpinner.style.display = 'none';
+                imageImg.style.display = 'block';
+            }
+
+            function regenerateImage() {
+                showSpinner();
+                fetch(generateUrl, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrftoken },
+                })
+                    .then(function (resp) { return resp.json(); })
+                    .then(function (data) {
+                        if (data.has_suggestions && data.image_url) {
+                            imageImg.src = data.image_url;
+                            imageCaption.textContent = 'Generated from the current list of suggestions.';
+                        } else {
+                            imageImg.src = placeholderUrl;
+                            imageCaption.textContent = 'Once suggestions come in, an AI-generated image based on them will appear here.';
+                        }
+                        hideSpinner();
+                    })
+                    .catch(function () {
+                        hideSpinner();
+                    });
+            }
+
+            function buildSuggestionCard(data) {
+                const card = document.createElement('div');
+                card.className = 'suggestion-card';
+                card.dataset.id = data.id;
+
+                const span = document.createElement('span');
+                span.textContent = data.title;
+                card.appendChild(span);
+
+                const actions = document.createElement('div');
+                actions.className = 'actions';
+
+                const editLink = document.createElement('a');
+                editLink.href = data.edit_url;
+                editLink.className = 'btn btn-sm btn-outline-light';
+                editLink.textContent = 'Edit';
+                actions.appendChild(editLink);
+
+                const deleteForm = document.createElement('form');
+                deleteForm.method = 'post';
+                deleteForm.action = data.delete_url;
+                deleteForm.className = 'delete-form';
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'submit';
+                deleteBtn.className = 'btn btn-sm btn-outline-danger';
+                deleteBtn.textContent = 'Delete';
+                deleteForm.appendChild(deleteBtn);
+                actions.appendChild(deleteForm);
+
+                card.appendChild(actions);
+                return card;
+            }
+
+            if (addForm) {
+                addForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const input = addForm.querySelector('input[name="title"]');
+                    const title = input.value.trim();
+                    if (!title) return;
+
+                    const formData = new FormData(addForm);
+                    fetch(addForm.action, {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        body: formData,
+                    })
+                        .then(function (resp) { return resp.json(); })
+                        .then(function (data) {
+                            if (data.error) return;
+                            input.value = '';
+                            emptyState.style.display = 'none';
+                            suggestionsList.appendChild(buildSuggestionCard(data));
+                            regenerateImage();
+                        });
+                });
+            }
+
+            if (suggestionsList) {
+                suggestionsList.addEventListener('submit', function (e) {
+                    const form = e.target.closest('.delete-form');
+                    if (!form) return;
+                    e.preventDefault();
+                    if (!confirm('Delete this suggestion?')) return;
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    })
+                        .then(function (resp) { return resp.json(); })
+                        .then(function (data) {
+                            if (data.error) return;
+                            const card = form.closest('.suggestion-card');
+                            if (card) card.remove();
+                            if (!suggestionsList.children.length) {
+                                emptyState.style.display = 'block';
+                            }
+                            regenerateImage();
+                        });
+                });
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('regenerate') === '1') {
+                regenerateImage();
+                params.delete('regenerate');
+                const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+                history.replaceState(null, '', newUrl);
+            }
+        })();
+    </script>
 </body>
 
 </html>

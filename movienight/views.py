@@ -1,6 +1,8 @@
 import logging
 
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from .models import MovieNightImage, MovieSuggestion
 
@@ -13,10 +15,16 @@ def _get_session_key(request):
     return request.session.session_key
 
 
+def _is_ajax(request):
+    return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+
 def _generate_image_safely():
     # Run synchronously within the request — Cloud Run throttles CPU once a
     # response is sent, so a background thread here would get starved/killed
     # before finishing (confirmed: zero log output, not even the exception).
+    # Called from its own endpoint (trigger_generation) so the page itself
+    # can respond instantly and let the client show a spinner while this runs.
     from .services import generate_movie_night_image
     try:
         generate_movie_night_image()
@@ -39,8 +47,16 @@ def add_suggestion(request):
     if request.method == "POST":
         title = request.POST.get("title", "").strip()
         if title:
-            MovieSuggestion.objects.create(title=title[:200], session_key=_get_session_key(request))
-            _generate_image_safely()
+            suggestion = MovieSuggestion.objects.create(title=title[:200], session_key=_get_session_key(request))
+            if _is_ajax(request):
+                return JsonResponse({
+                    "id": suggestion.pk,
+                    "title": suggestion.title,
+                    "edit_url": reverse("movienight:edit_suggestion", args=[suggestion.pk]),
+                    "delete_url": reverse("movienight:delete_suggestion", args=[suggestion.pk]),
+                })
+    if _is_ajax(request):
+        return JsonResponse({"error": "invalid"}, status=400)
     return redirect("movienight:movie_night")
 
 
@@ -53,8 +69,7 @@ def edit_suggestion(request, pk):
         if title:
             suggestion.title = title[:200]
             suggestion.save()
-            _generate_image_safely()
-        return redirect("movienight:movie_night")
+        return redirect(reverse("movienight:movie_night") + "?regenerate=1")
     return render(request, "movienight/edit_suggestion.html", {"suggestion": suggestion})
 
 
@@ -62,5 +77,20 @@ def delete_suggestion(request, pk):
     suggestion = get_object_or_404(MovieSuggestion, pk=pk)
     if request.method == "POST" and suggestion.session_key == request.session.session_key:
         suggestion.delete()
-        _generate_image_safely()
+        if _is_ajax(request):
+            return JsonResponse({"success": True})
+    if _is_ajax(request):
+        return JsonResponse({"error": "invalid"}, status=400)
     return redirect("movienight:movie_night")
+
+
+def trigger_generation(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "method not allowed"}, status=405)
+    _generate_image_safely()
+    has_suggestions = MovieSuggestion.objects.exists()
+    movie_image = MovieNightImage.objects.order_by("-generated_at").first() if has_suggestions else None
+    return JsonResponse({
+        "has_suggestions": has_suggestions,
+        "image_url": movie_image.image.url if movie_image else None,
+    })

@@ -8,4 +8,5 @@ urlpatterns = [
     path("add/", views.add_suggestion, name="add_suggestion"),
     path("edit/<int:pk>/", views.edit_suggestion, name="edit_suggestion"),
     path("delete/<int:pk>/", views.delete_suggestion, name="delete_suggestion"),
+    path("generate/", views.trigger_generation, name="trigger_generation"),
 ]
