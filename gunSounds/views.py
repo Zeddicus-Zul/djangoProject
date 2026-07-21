@@ -80,15 +80,14 @@ def quiz(request):
     return render(request, 'gunSounds/quiz.html', context)
 
 def sound_list(request):
+    # All guns are always sent to the page; filtering happens client-side in
+    # JS so switching filters doesn't need a full page reload. The GET params
+    # still set the initial active filter (so a shared/bookmarked filtered
+    # URL still opens correctly).
     guns = Gun.objects.all()
 
     selected_ammo_type = request.GET.get('ammo_type')
     selected_size = request.GET.get('size')
-
-    if selected_ammo_type:
-        guns = guns.filter(ammo_type__iexact=selected_ammo_type)
-    if selected_size:
-        guns = guns.filter(size__iexact=selected_size)
 
     all_ammo_types = Gun.objects.values_list('ammo_type', flat=True).distinct().order_by('ammo_type')
     all_sizes = Gun.objects.values_list('size', flat=True).distinct().order_by('size')

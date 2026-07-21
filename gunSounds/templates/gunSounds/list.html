@@ -11,27 +11,57 @@
     <link rel="stylesheet" href="{% static 'gunSounds/styles.css' %}" />
     <style>
         /* Styling for the filter buttons */
-        .filter-buttons {
-            margin-bottom: 20px;
-            text-align: center; 
+        .filter-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 30px;
         }
-        .filter-buttons button {
-            margin: 5px;
-            padding: 8px 15px;
-            background-color: #333;
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-row .filter-label {
+            color: #999;
+            font-size: 0.9rem;
+            margin-right: 6px;
+        }
+
+        .filter-btn {
+            margin: 0;
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.08);
             color: #fff;
-            border: 1px solid #555;
-            border-radius: 5px;
+            border: 2px solid #555;
+            border-radius: 999px;
             cursor: pointer;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
         }
-        .filter-buttons button:hover {
-            background-color: #555;
-            border-color: #777;
+
+        .filter-btn:hover {
+            background: rgba(104, 14, 14, 0.35);
+            border-color: #680e0e;
+            transform: translateY(-1px);
         }
-        .filter-buttons button.active {
-            background-color: #680e0e; /* Highlight for the selected filter */
+
+        .filter-btn.active {
+            background-color: #680e0e;
             border-color: #881e1e;
+        }
+
+        .gun-box.filtered-out {
+            display: none;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #999;
+            padding: 30px 0;
         }
     </style>
 </head>
@@ -83,51 +113,32 @@
     <div class="container mt-5">
         <h1 class="mb-4">Gun Sounds Library</h1>
 
-    <div class="filter-bar">
-        <div class="filter-buttons">
-            <span>Ammo Type:</span>
-            <button
-                onclick="window.location.href = `{% url 'sound_list' %}?size={{ selected_size }}`"
-                class="{% if not selected_ammo_type %}active{% endif %}"
-            >
-                All
-            </button>
-            {% for atype in ammo_types %}
-                <button
-                    onclick="window.location.href = `{% url 'sound_list' %}?ammo_type={{ atype }}&size={{ selected_size }}`"
-                    class="{% if atype == selected_ammo_type %}active{% endif %}"
-                >
-                    {{ atype }}
-                </button>
-            {% endfor %}
+        <div class="filter-bar">
+            <div class="filter-row" data-filter-group="ammo_type">
+                <span class="filter-label">Ammo Type:</span>
+                <button type="button" class="filter-btn active" data-value="">All</button>
+                {% for atype in ammo_types %}
+                <button type="button" class="filter-btn" data-value="{{ atype }}">{{ atype }}</button>
+                {% endfor %}
+            </div>
+
+            <div class="filter-row" data-filter-group="size">
+                <span class="filter-label">Size:</span>
+                <button type="button" class="filter-btn active" data-value="">All</button>
+                {% for s in sizes %}
+                <button type="button" class="filter-btn" data-value="{{ s }}">{{ s }}</button>
+                {% endfor %}
+            </div>
         </div>
 
-        <div class="filter-buttons">
-            <span>Size:</span>
-            <button
-                onclick="window.location.href = `{% url 'sound_list' %}?ammo_type={{ selected_ammo_type }}`"
-                class="{% if not selected_size %}active{% endif %}"
-            >
-                All
-            </button>
-            {% for s in sizes %}
-                <button
-                    onclick="window.location.href = `{% url 'sound_list' %}?ammo_type={{ selected_ammo_type }}&size={{ s }}`"
-                    class="{% if s == selected_size %}active{% endif %}"
-                >
-                    {{ s }}
-                </button>
-            {% endfor %}
-        </div>
-    </div>
+        <p class="no-results" id="no-results" style="display:none;">No guns match the selected filters.</p>
 
-
-    <div class="gun-grid">
-        {% for gun in guns %}
-            <div class="gun-box">
+        <div class="gun-grid" id="gun-grid">
+            {% for gun in guns %}
+            <div class="gun-box" data-ammo-type="{{ gun.ammo_type }}" data-size="{{ gun.size }}">
                 <h2>{{ gun.name }}</h2>
                 {% if gun.image %}
-                    <img src="{{ gun.image.url }}" width="400" height="auto" alt="{{ gun.name }}" />
+                <img src="{{ gun.image.url }}" width="400" height="auto" alt="{{ gun.name }}" />
                 {% endif %}
 
                 <div class="buttons">
@@ -139,18 +150,18 @@
                 </div>
 
                 {% for clip in gun.audio_clips.all %}
-                    {% if clip.audio_file %}
-                        <audio id="audio-{{ gun.id }}-{{ clip.distance }}" src="{{ clip.audio_file.url }}"></audio>
-                    {% endif %}
+                {% if clip.audio_file %}
+                <audio id="audio-{{ gun.id }}-{{ clip.distance }}" src="{{ clip.audio_file.url }}"></audio>
+                {% endif %}
                 {% endfor %}
             </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
     </div>
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         function playAudio(gunId, distance) {
             const audio = document.getElementById('audio-' + gunId + '-' + distance);
@@ -158,6 +169,61 @@
                 audio.play();
             }
         }
+
+        (function () {
+            const initialAmmoType = "{{ selected_ammo_type|default:'' }}";
+            const initialSize = "{{ selected_size|default:'' }}";
+            let currentAmmoType = initialAmmoType;
+            let currentSize = initialSize;
+
+            const gunBoxes = document.querySelectorAll('.gun-box');
+            const noResults = document.getElementById('no-results');
+            const filterRows = document.querySelectorAll('[data-filter-group]');
+
+            function setActiveButton(row, value) {
+                row.querySelectorAll('.filter-btn').forEach(function (btn) {
+                    btn.classList.toggle('active', btn.dataset.value === value);
+                });
+            }
+
+            function applyFilter() {
+                let visibleCount = 0;
+                gunBoxes.forEach(function (box) {
+                    const matchesAmmo = !currentAmmoType || box.dataset.ammoType === currentAmmoType;
+                    const matchesSize = !currentSize || box.dataset.size === currentSize;
+                    const show = matchesAmmo && matchesSize;
+                    box.classList.toggle('filtered-out', !show);
+                    if (show) visibleCount += 1;
+                });
+                noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+
+                const params = new URLSearchParams();
+                if (currentAmmoType) params.set('ammo_type', currentAmmoType);
+                if (currentSize) params.set('size', currentSize);
+                const query = params.toString();
+                const newUrl = window.location.pathname + (query ? '?' + query : '');
+                history.replaceState(null, '', newUrl);
+            }
+
+            filterRows.forEach(function (row) {
+                const group = row.dataset.filterGroup;
+                setActiveButton(row, group === 'ammo_type' ? currentAmmoType : currentSize);
+                row.addEventListener('click', function (e) {
+                    const btn = e.target.closest('.filter-btn');
+                    if (!btn) return;
+                    const value = btn.dataset.value;
+                    if (group === 'ammo_type') {
+                        currentAmmoType = value;
+                    } else {
+                        currentSize = value;
+                    }
+                    setActiveButton(row, value);
+                    applyFilter();
+                });
+            });
+
+            applyFilter();
+        })();
     </script>
 </body>
 
