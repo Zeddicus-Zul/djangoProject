@@ -24,16 +24,21 @@
 
         .filter-row {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
             gap: 8px;
         }
 
         .filter-row .filter-label {
             color: #999;
             font-size: 0.9rem;
-            margin-right: 6px;
+        }
+
+        .filter-buttons-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
         }
 
         .filter-btn {
@@ -121,18 +126,22 @@
         <div class="filter-bar">
             <div class="filter-row" data-filter-group="ammo_type">
                 <span class="filter-label">Ammo Type:</span>
-                <button type="button" class="filter-btn active" data-value="">All</button>
-                {% for atype in ammo_types %}
-                <button type="button" class="filter-btn" data-value="{{ atype }}">{{ atype }}</button>
-                {% endfor %}
+                <div class="filter-buttons-group">
+                    <button type="button" class="filter-btn active" data-value="">All</button>
+                    {% for atype in ammo_types %}
+                    <button type="button" class="filter-btn" data-value="{{ atype }}">{{ atype }}</button>
+                    {% endfor %}
+                </div>
             </div>
 
             <div class="filter-row" data-filter-group="size">
                 <span class="filter-label">Size:</span>
-                <button type="button" class="filter-btn active" data-value="">All</button>
-                {% for s in sizes %}
-                <button type="button" class="filter-btn" data-value="{{ s }}">{{ s }}</button>
-                {% endfor %}
+                <div class="filter-buttons-group">
+                    <button type="button" class="filter-btn active" data-value="">All</button>
+                    {% for s in sizes %}
+                    <button type="button" class="filter-btn" data-value="{{ s }}">{{ s }}</button>
+                    {% endfor %}
+                </div>
             </div>
         </div>
 
