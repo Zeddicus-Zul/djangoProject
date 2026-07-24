@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MovieSuggestion, MovieNightImage
+from .models import MovieSuggestion, MovieNightImage, PickedMovie
 
 
 class MovieSuggestionAdmin(admin.ModelAdmin):
@@ -12,5 +12,12 @@ class MovieNightImageAdmin(admin.ModelAdmin):
     readonly_fields = ('prompt_used',)
 
 
+class PickedMovieAdmin(admin.ModelAdmin):
+    list_display = ('title', 'mode', 'chosen_at')
+    list_filter = ('mode',)
+    search_fields = ('title',)
+
+
 admin.site.register(MovieSuggestion, MovieSuggestionAdmin)
 admin.site.register(MovieNightImage, MovieNightImageAdmin)
+admin.site.register(PickedMovie, PickedMovieAdmin)

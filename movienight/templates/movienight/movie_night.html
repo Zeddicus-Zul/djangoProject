@@ -82,6 +82,28 @@
             color: #ccc;
         }
 
+        .mode-link {
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        .random-pick {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .random-pick-result {
+            background: rgba(104, 14, 14, 0.25);
+            border: 2px solid #680e0e;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
         .movie-image {
             text-align: center;
             margin-top: 40px;
@@ -125,6 +147,8 @@
         <div class="container-narrow">
             <h1>Movie Night</h1>
 
+            <a href="{% url 'movienight:pick_curated' %}" class="mode-link">Looking for tonight's curated pick instead? &rarr;</a>
+
             <form id="add-form" class="add-form" method="post" action="{% url 'movienight:add_suggestion' %}">
                 {% csrf_token %}
                 <input type="text" name="title" class="form-control" placeholder="Suggest a movie..." maxlength="200" required>
@@ -148,6 +172,16 @@
                 {% endfor %}
             </div>
             <p id="empty-state" class="empty-state" {% if suggestions %}style="display:none;"{% endif %}>No suggestions yet &mdash; be the first!</p>
+
+            <div class="random-pick">
+                {% if random_pick %}
+                <div class="random-pick-result">&#127914; Tonight's random pick: <strong>{{ random_pick.title }}</strong></div>
+                {% endif %}
+                <form method="post" action="{% url 'movienight:pick_random' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">&#127922; Pick Randomly</button>
+                </form>
+            </div>
         </div>
 
         <div class="movie-image" id="movie-image-section" data-placeholder-url="{% static 'movienight/placeholder.svg' %}">

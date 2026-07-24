@@ -9,4 +9,6 @@ urlpatterns = [
     path("edit/<int:pk>/", views.edit_suggestion, name="edit_suggestion"),
     path("delete/<int:pk>/", views.delete_suggestion, name="delete_suggestion"),
     path("generate/", views.trigger_generation, name="trigger_generation"),
+    path("random-pick/", views.pick_random, name="pick_random"),
+    path("pick/", views.pick_curated, name="pick_curated"),
 ]
