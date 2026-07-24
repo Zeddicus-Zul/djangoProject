@@ -68,13 +68,6 @@
             color: #ccc;
         }
 
-        footer {
-            background-color: #212529;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-
         .back-link {
             display: block;
             text-align: center;
@@ -190,14 +183,12 @@
                  src="{% if movie_image %}{{ movie_image.image.url }}{% else %}{% static 'movienight/placeholder.svg' %}{% endif %}"
                  alt="AI-generated image based on the group's movie picks">
             <p id="movie-image-caption">
-                {% if movie_image %}Generated from the current list of suggestions.{% else %}Once suggestions come in, an AI-generated image based on them will appear here.{% endif %}
+                {% if not movie_image %}Once suggestions come in, an AI-generated image based on them will appear here.{% endif %}
             </p>
         </div>
 
         <a href="/" class="back-link">&larr; Back to portfolio</a>
     </main>
-
-    <footer>Work In Progress</footer>
 
     <script>
         (function () {
@@ -238,7 +229,7 @@
                     .then(function (data) {
                         if (data.has_suggestions && data.image_url) {
                             imageImg.src = data.image_url;
-                            imageCaption.textContent = 'Generated from the current list of suggestions.';
+                            imageCaption.textContent = '';
                         } else {
                             imageImg.src = placeholderUrl;
                             imageCaption.textContent = 'Once suggestions come in, an AI-generated image based on them will appear here.';
