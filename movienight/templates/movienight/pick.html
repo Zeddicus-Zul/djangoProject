@@ -107,7 +107,7 @@
             <p class="pick-title">{{ current_pick.title }}</p>
             {% if youtube_id %}
             <div class="trailer-wrap">
-                <iframe src="https://www.youtube.com/embed/{{ youtube_id }}" title="Trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/{{ youtube_id }}" title="Trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
             {% endif %}
             {% else %}
