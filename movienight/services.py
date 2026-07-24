@@ -58,3 +58,9 @@ def generate_movie_night_image():
     filename = f"movienight-{timezone.now():%Y%m%d%H%M%S%f}.png"
     movie_image = MovieNightImage(prompt_used=image_prompt)
     movie_image.image.save(filename, ContentFile(image_bytes), save=True)
+
+    # Only the latest image is ever shown -- delete older ones (file + row)
+    # so they don't pile up in storage indefinitely.
+    for old in MovieNightImage.objects.exclude(pk=movie_image.pk):
+        old.image.delete(save=False)
+        old.delete()
