@@ -166,6 +166,7 @@
             </div>
             <p id="empty-state" class="empty-state" {% if suggestions %}style="display:none;"{% endif %}>No suggestions yet &mdash; be the first!</p>
 
+            {% if is_admin %}
             <div class="random-pick">
                 {% if random_pick %}
                 <div class="random-pick-result">&#127914; Tonight's random pick: <strong>{{ random_pick.title }}</strong></div>
@@ -175,6 +176,7 @@
                     <button type="submit" class="btn btn-danger">&#127922; Pick Randomly</button>
                 </form>
             </div>
+            {% endif %}
         </div>
 
         <div class="movie-image" id="movie-image-section" data-placeholder-url="{% static 'movienight/placeholder.svg' %}">

@@ -36,22 +36,24 @@ def _generate_image_safely():
 
 def movie_night(request):
     session_key = request.session.session_key
+    is_admin = request.user.is_authenticated and request.user.is_staff
     suggestions = [
         {"obj": s, "is_owner": s.session_key == session_key}
         for s in MovieSuggestion.objects.order_by("-created_at")
     ]
     # Don't show a stale image once the list it was generated from is empty.
     movie_image = MovieNightImage.objects.order_by("-generated_at").first() if suggestions else None
-    random_pick = PickedMovie.objects.filter(mode="random").order_by("-chosen_at").first()
+    random_pick = PickedMovie.objects.filter(mode="random").order_by("-chosen_at").first() if is_admin else None
     return render(request, "movienight/movie_night.html", {
         "suggestions": suggestions,
         "movie_image": movie_image,
         "random_pick": random_pick,
+        "is_admin": is_admin,
     })
 
 
 def pick_random(request):
-    if request.method == "POST":
+    if request.method == "POST" and request.user.is_authenticated and request.user.is_staff:
         titles = list(MovieSuggestion.objects.values_list("title", flat=True))
         if titles:
             PickedMovie.objects.create(mode="random", title=random.choice(titles))
