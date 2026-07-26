@@ -68,21 +68,6 @@
             color: #ccc;
         }
 
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 30px;
-            color: #ccc;
-        }
-
-        .mode-link {
-            display: block;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #ccc;
-            font-size: 0.9rem;
-        }
-
         .random-pick {
             text-align: center;
             margin-top: 20px;
@@ -140,8 +125,6 @@
         <div class="container-narrow">
             <h1>Movie Night</h1>
 
-            <a href="{% url 'movienight:pick_curated' %}" class="mode-link">Looking for tonight's curated pick instead? &rarr;</a>
-
             <form id="add-form" class="add-form" method="post" action="{% url 'movienight:add_suggestion' %}">
                 {% csrf_token %}
                 <input type="text" name="title" class="form-control" placeholder="Suggest a movie..." maxlength="200" required>
@@ -188,8 +171,6 @@
                 {% if not movie_image %}Once suggestions come in, an AI-generated image based on them will appear here.{% endif %}
             </p>
         </div>
-
-        <a href="/" class="back-link">&larr; Back to portfolio</a>
     </main>
 
     <script>

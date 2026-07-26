@@ -32,14 +32,6 @@
             margin-bottom: 30px;
         }
 
-        .mode-link {
-            display: block;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #ccc;
-            font-size: 0.9rem;
-        }
-
         .pick-title {
             text-align: center;
             font-size: 1.5rem;
@@ -87,12 +79,6 @@
             margin-bottom: 15px;
         }
 
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 30px;
-            color: #ccc;
-        }
     </style>
 </head>
 
@@ -100,8 +86,6 @@
     <main>
         <div class="container-narrow">
             <h1>Tonight's Pick</h1>
-
-            <a href="{% url 'movienight:movie_night' %}" class="mode-link">&larr; Back to suggestions &amp; random pick</a>
 
             {% if current_pick %}
             <p class="pick-title">{{ current_pick.title }}</p>
@@ -128,8 +112,6 @@
                 <button type="submit" class="btn btn-danger">Set Tonight's Pick</button>
             </form>
             {% endif %}
-
-            <a href="/" class="back-link">&larr; Back to portfolio</a>
         </div>
     </main>
 </body>
