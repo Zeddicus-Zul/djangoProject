@@ -5,7 +5,6 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import requests
-import json
 
 from .forms import JoinForm, LoginForm
 from .models import Gun, AudioClip, MapMarker
@@ -199,37 +198,51 @@ def server_info(request):
 @csrf_exempt
 def save_marker(request):
     if request.method == 'POST':
+        if not (request.user.is_authenticated and request.user.is_staff):
+            return JsonResponse({'success': False, 'error': 'Not authorized'}, status=403)
         try:
-            data = json.loads(request.body)
             marker = MapMarker.objects.create(
-                name=data['name'],
-                map_name=data.get('map_name', 'stillwater'),
-                latitude=data['latitude'],
-                longitude=data['longitude'],
-                marker_type=data.get('marker_type', 'spawn')
+                name=request.POST['name'],
+                map_name=request.POST.get('map_name', 'stillwater'),
+                latitude=request.POST['latitude'],
+                longitude=request.POST['longitude'],
+                marker_type=request.POST.get('marker_type', 'spawn'),
+                photo=request.FILES.get('photo'),
             )
             return JsonResponse({
                 'success': True,
                 'id': marker.id,
+                'photo_url': marker.photo.url if marker.photo else None,
                 'message': 'Marker saved successfully'
             })
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
-    
+
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 
 def get_markers(request):
     map_name = request.GET.get('map_name', 'stillwater')
-    markers = MapMarker.objects.filter(map_name=map_name).values(
-        'id', 'name', 'latitude', 'longitude', 'marker_type'
-    )
-    return JsonResponse(list(markers), safe=False)
+    markers = MapMarker.objects.filter(map_name=map_name)
+    data = [
+        {
+            'id': m.id,
+            'name': m.name,
+            'latitude': m.latitude,
+            'longitude': m.longitude,
+            'marker_type': m.marker_type,
+            'photo_url': m.photo.url if m.photo else None,
+        }
+        for m in markers
+    ]
+    return JsonResponse(data, safe=False)
 
 
 @csrf_exempt
 def delete_marker(request, marker_id):
     if request.method == 'DELETE':
+        if not (request.user.is_authenticated and request.user.is_staff):
+            return JsonResponse({'success': False, 'error': 'Not authorized'}, status=403)
         try:
             marker = MapMarker.objects.get(id=marker_id)
             marker.delete()

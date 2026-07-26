@@ -42,6 +42,7 @@ class MapMarker(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     marker_type = models.CharField(max_length=50, default='spawn')
+    photo = models.ImageField(upload_to='markers/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

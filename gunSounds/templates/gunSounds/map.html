@@ -9,6 +9,9 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 	<!-- Leaflet CSS -->
 	<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+	<!-- Leaflet.markercluster CSS -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 	<style>
 		body {
 			margin: 0;
@@ -48,6 +51,30 @@
 			color: #680e0e;
 			margin-bottom: 10px;
 			font-size: 1rem;
+		}
+		.custom-cluster-icon div {
+			background: #680e0e;
+			color: white;
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: bold;
+			border: 2px solid white;
+			box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+		}
+		.marker-tooltip {
+			text-align: center;
+		}
+		.marker-tooltip img {
+			display: block;
+			margin-top: 6px;
+			max-width: 140px;
+			max-height: 100px;
+			border-radius: 4px;
+			border: 1px solid rgba(104, 14, 14, 0.5);
 		}
 	</style>
 </head>
@@ -116,8 +143,37 @@
 		{% endif %}
 	</div>
 
+	{% if is_admin %}
+	<div class="modal fade" id="addMarkerModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content" style="background:#2d2d2d; color:white;">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Marker</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label for="markerNameInput" class="form-label">Name</label>
+						<input type="text" id="markerNameInput" class="form-control" required>
+					</div>
+					<div class="mb-3">
+						<label for="markerPhotoInput" class="form-label">Thumbnail photo (optional)</label>
+						<input type="file" id="markerPhotoInput" class="form-control" accept="image/*">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-danger" onclick="saveNewMarker()">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
 	<!-- Leaflet JS -->
 	<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+	<!-- Leaflet.markercluster JS -->
+	<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 	<script>
 		// Image dimensions (update to your actual image size in pixels)
 		const imageWidth = 4096; // example width
@@ -181,13 +237,46 @@ var map = L.map('map', {
 	// Fit the map to show the entire image with some padding
 	map.fitBounds(bounds, {padding: [20, 20]});
 
-	// Example marker group
-	var markerGroup = L.layerGroup();
+	// Cluster group so markers group together (instead of obstructing the map) when zoomed out
+	var markerGroup = L.markerClusterGroup({
+		maxClusterRadius: 50,
+		iconCreateFunction: function(cluster) {
+			return L.divIcon({
+				html: '<div>' + cluster.getChildCount() + '</div>',
+				className: 'custom-cluster-icon',
+				iconSize: L.point(36, 36)
+			});
+		}
+	});
 	markerGroup.addTo(map);
-		
+
+	// Tracks every marker regardless of cluster/visibility state, since removing a
+	// marker from markerGroup (to hide it via the legend toggles) also drops it out
+	// of markerGroup.eachLayer() — this is the only place that still has all of them.
+	var allMarkers = [];
+
+	function buildTooltipHtml(name, photoUrl) {
+		var html = '<div class="marker-tooltip"><strong>' + name + '</strong>';
+		if (photoUrl) {
+			html += '<br><img src="' + photoUrl + '" alt="' + name + '">';
+		}
+		html += '</div>';
+		return html;
+	}
+
+	function buildPopupHtml(name, type, lat, lng, id) {
+		var html = '<strong>' + name + '</strong><br>' +
+			'Type: ' + type + '<br>' +
+			'Coords: [' + lat.toFixed(2) + ', ' + lng.toFixed(2) + ']<br>';
+		{% if is_admin %}
+		html += '<button onclick="deleteMarkerById(' + id + ')" style="margin-top:5px; padding:3px 8px; cursor:pointer; background:#dc3545; color:white; border:none; border-radius:3px;">Delete</button>';
+		{% endif %}
+		return html;
+	}
+
 		// Load existing markers from database
 		loadMarkers();
-		
+
 		function loadMarkers() {
 			fetch('/gunsounds/api/markers/get/?map_name=stillwater')
 				.then(response => response.json())
@@ -198,15 +287,10 @@ var map = L.map('map', {
 						marker._id = markerData.id;
 						marker._name = markerData.name;
 						marker._type = markerData.marker_type;
-						
-						var popupContent = '<strong>' + markerData.name + '</strong><br>' +
-							'Type: ' + markerData.marker_type + '<br>' +
-						'Coords: [' + markerData.latitude.toFixed(2) + ', ' + markerData.longitude.toFixed(2) + ']<br>'
-						{% if is_admin %}
-						+ '<button onclick="deleteMarkerById(' + markerData.id + ')" style="margin-top:5px; padding:3px 8px; cursor:pointer; background:#dc3545; color:white; border:none; border-radius:3px;">Delete</button>'
-						{% endif %}
-						;
-						marker.bindPopup(popupContent);
+						allMarkers.push(marker);
+
+						marker.bindTooltip(buildTooltipHtml(markerData.name, markerData.photo_url), {direction: 'top', offset: [0, -10], opacity: 0.95});
+						marker.bindPopup(buildPopupHtml(markerData.name, markerData.marker_type, markerData.latitude, markerData.longitude, markerData.id));
 					});
 				})
 				.catch(error => console.error('Error loading markers:', error));
@@ -218,7 +302,7 @@ var map = L.map('map', {
 				updateMarkerVisibility();
 			});
 		});
-		
+
 		function updateMarkerVisibility() {
 			var visibleTypes = {
 				spawn: document.getElementById('toggleSpawn').checked,
@@ -227,44 +311,58 @@ var map = L.map('map', {
 				supply: document.getElementById('toggleSupply').checked,
 				cashReg: document.getElementById('toggleCashReg').checked
 			};
-			
-			markerGroup.eachLayer(function(layer) {
-				if (layer._type && visibleTypes.hasOwnProperty(layer._type)) {
-					if (visibleTypes[layer._type]) {
-						if (!map.hasLayer(layer)) {
-							layer.addTo(map);
-						}
-					} else {
-						if (map.hasLayer(layer)) {
-							map.removeLayer(layer);
-						}
+
+			allMarkers.forEach(function(layer) {
+				if (!layer._type || !visibleTypes.hasOwnProperty(layer._type)) return;
+				if (visibleTypes[layer._type]) {
+					if (!markerGroup.hasLayer(layer)) {
+						markerGroup.addLayer(layer);
+					}
+				} else {
+					if (markerGroup.hasLayer(layer)) {
+						markerGroup.removeLayer(layer);
 					}
 				}
 			});
 		}
 
-	// Click to add spawn markers (admin only)
+	// Click to add markers (admin only) — opens a modal for name + optional thumbnail photo
 	{% if is_admin %}
+	var addMarkerModalEl = document.getElementById('addMarkerModal');
+	var addMarkerModal = new bootstrap.Modal(addMarkerModalEl);
+	var pendingCoord = null;
+
+	addMarkerModalEl.addEventListener('hidden.bs.modal', function() {
+		pendingCoord = null;
+	});
+
 	map.on('click', function(e) {
-		var coord = e.latlng;
-		var name = prompt('Enter marker name:');
-		if (!name) return; // Cancel if no name provided
-		
+		pendingCoord = e.latlng;
+		document.getElementById('markerNameInput').value = '';
+		document.getElementById('markerPhotoInput').value = '';
+		addMarkerModal.show();
+	});
+
+	window.saveNewMarker = function() {
+		if (!pendingCoord) return;
+		var coord = pendingCoord;
+		var name = document.getElementById('markerNameInput').value.trim();
+		if (!name) { alert('Please enter a name'); return; }
+
 		var markerType = document.getElementById('markerType').value;
-		
-		// Save to database
+		var photoFile = document.getElementById('markerPhotoInput').files[0];
+
+		var formData = new FormData();
+		formData.append('name', name);
+		formData.append('map_name', 'stillwater');
+		formData.append('latitude', coord.lat);
+		formData.append('longitude', coord.lng);
+		formData.append('marker_type', markerType);
+		if (photoFile) formData.append('photo', photoFile);
+
 		fetch('/gunsounds/api/markers/save/', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					name: name,
-					map_name: 'stillwater',
-					latitude: coord.lat,
-					longitude: coord.lng,
-					marker_type: markerType
-				})
+				body: formData
 			})
 			.then(response => response.json())
 			.then(data => {
@@ -274,13 +372,12 @@ var map = L.map('map', {
 					marker._id = data.id;
 					marker._name = name;
 					marker._type = markerType;
-					
-					var popupContent = '<strong>' + name + '</strong><br>' +
-						'Type: ' + markerType + '<br>' +
-						'Coords: [' + coord.lat.toFixed(2) + ', ' + coord.lng.toFixed(2) + ']<br>' +
-						'<button onclick="deleteMarkerById(' + data.id + ')" style="margin-top:5px; padding:3px 8px; cursor:pointer; background:#dc3545; color:white; border:none; border-radius:3px;">Delete</button>';
-					marker.bindPopup(popupContent).openPopup();
-					
+					allMarkers.push(marker);
+
+					marker.bindTooltip(buildTooltipHtml(name, data.photo_url), {direction: 'top', offset: [0, -10], opacity: 0.95});
+					marker.bindPopup(buildPopupHtml(name, markerType, coord.lat, coord.lng, data.id));
+
+					addMarkerModal.hide();
 					console.log('Marker saved:', name, markerType, [coord.lat, coord.lng]);
 				} else {
 					alert('Error saving marker: ' + data.error);
@@ -289,9 +386,9 @@ var map = L.map('map', {
 			.catch(error => {
 				console.error('Error:', error);
 				alert('Failed to save marker');
-	});
-});
-{% endif %}
+			});
+	};
+	{% endif %}
 
 // Function to delete marker by ID
 window.deleteMarkerById = function(markerId) {
@@ -303,10 +400,10 @@ window.deleteMarkerById = function(markerId) {
 	.then(response => response.json())
 	.then(data => {
 		if (data.success) {
-			markerGroup.eachLayer(function(layer) {
-				if (layer._id === markerId) {
-					markerGroup.removeLayer(layer);
-				}
+			allMarkers = allMarkers.filter(function(layer) {
+				if (layer._id !== markerId) return true;
+				markerGroup.removeLayer(layer);
+				return false;
 			});
 			console.log('Marker deleted');
 		} else {
@@ -321,7 +418,7 @@ window.deleteMarkerById = function(markerId) {
 		// Export markers as JSON
 		window.exportMarkers = function() {
 			var markers = [];
-			markerGroup.eachLayer(function(layer) {
+			allMarkers.forEach(function(layer) {
 				if (layer._id) {
 					markers.push({
 						id: layer._id,
@@ -340,5 +437,4 @@ window.deleteMarkerById = function(markerId) {
 	<!-- Bootstrap JS Bundle -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
 </html>

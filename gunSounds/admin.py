@@ -16,7 +16,7 @@ class ScoreAdmin(admin.ModelAdmin):
     readonly_fields = ('user',)
 
 class MapMarkerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'map_name', 'marker_type', 'latitude', 'longitude', 'created_at')
+    list_display = ('name', 'map_name', 'marker_type', 'photo', 'latitude', 'longitude', 'created_at')
     list_filter = ('map_name', 'marker_type')
     search_fields = ('name',)
 
