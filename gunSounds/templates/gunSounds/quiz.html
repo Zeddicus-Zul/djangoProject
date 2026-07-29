@@ -235,47 +235,39 @@
 </head>
 
 <body>
-    <!-- Bootstrap Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="{% url 'landing' %}">&larr; Portfolio</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'quiz' %}">Quiz</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'map' %}">Map</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'about' %}">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'contact' %}">Contact</a>
-                    </li>
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout ({{user.username}})</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin" target="_blank">Admin</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- Site Header -->
+    <header class="d-flex flex-wrap align-items-center justify-content-center py-3 px-3 border-bottom text-bg-dark">
+        <a class="d-flex align-items-center mb-2 mb-md-0 me-md-auto fw-bold text-white text-decoration-none" href="{% url 'landing' %}">&larr; Portfolio</a>
+        <ul class="nav nav-pills" style="--bs-nav-pills-link-active-bg:#680e0e;">
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'quiz' %}">Quiz</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'map' %}">Map</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'about' %}">About</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'contact' %}">Contact</a>
+            </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'logout' %}">Logout ({{user.username}})</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'login' %}">Login</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link text-white" href="/admin" target="_blank">Admin</a>
+            </li>
+        </ul>
+    </header>
 
     <main>
         <section class="quiz-section">
