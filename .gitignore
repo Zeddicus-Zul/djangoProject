@@ -54,4 +54,7 @@ update_requirements.sh
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
+# Bootstrap example snippets pulled in for reference
+gunSounds/bootstrap_examples/
+
 

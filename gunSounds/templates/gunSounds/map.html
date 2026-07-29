@@ -19,9 +19,14 @@
 			overflow: hidden;
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 		}
-		#map {
+		.app-layout {
+			display: flex;
 			width: 100vw;
 			height: calc(100vh - 56px);
+		}
+		#map {
+			flex: 1 1 auto;
+			height: 100%;
 			margin: 0;
 			padding: 0;
 			border: none;
@@ -30,27 +35,80 @@
 		.leaflet-container {
 			background: #1a1a1a;
 		}
-		.legend {
-			position: absolute;
-			top: 60px;
-			right: 10px;
-			background: rgba(45, 45, 45, 0.95);
-			color: white;
-			padding: 15px;
-			border-radius: 8px;
-			border: 1px solid rgba(104, 14, 14, 0.5);
-			box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-			z-index: 1000;
+		.sidebar {
+			flex: 0 0 280px;
+			width: 280px;
+			height: 100%;
+			overflow-y: auto;
+			border-left: 1px solid rgba(104, 14, 14, 0.5);
+			box-shadow: -2px 0 10px rgba(0,0,0,0.5);
 		}
-		.legend label {
-			display: block;
-			margin-bottom: 5px;
+		.sidebar-title {
+			color: #680e0e;
+			font-size: 1rem;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+		}
+		.legend-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 8px 0;
+			border-bottom: 1px solid rgba(255,255,255,0.08);
+		}
+		.legend-item-label {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.legend-dot {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			display: inline-block;
+			flex-shrink: 0;
+		}
+		.legend-icon {
+			width: 22px;
+			height: auto;
+			flex-shrink: 0;
+		}
+		.toggle-switch {
+			position: relative;
+			display: inline-block;
+			width: 38px;
+			height: 20px;
+			flex-shrink: 0;
 			cursor: pointer;
 		}
-		.legend h5 {
-			color: #680e0e;
-			margin-bottom: 10px;
-			font-size: 1rem;
+		.toggle-switch input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+		.toggle-switch .slider {
+			position: absolute;
+			inset: 0;
+			background-color: #555;
+			transition: 0.2s;
+			border-radius: 20px;
+		}
+		.toggle-switch .slider::before {
+			position: absolute;
+			content: "";
+			height: 14px;
+			width: 14px;
+			left: 3px;
+			bottom: 3px;
+			background-color: white;
+			transition: 0.2s;
+			border-radius: 50%;
+		}
+		.toggle-switch input:checked + .slider {
+			background-color: #680e0e;
+		}
+		.toggle-switch input:checked + .slider::before {
+			transform: translateX(18px);
 		}
 		.custom-cluster-icon div {
 			background: #680e0e;
@@ -121,26 +179,48 @@
 		</div>
 	</nav>
 
-	<div id="map"></div>
-	<div class="legend">
-		<strong>Legend</strong><br>
-		<label><input type="checkbox" checked id="toggleSpawn"> <span style="color:#2196F3">●</span> Spawn</label>
-		<label><input type="checkbox" checked id="toggleExtraction"> <span style="color:#4CAF50">●</span> Extraction</label>
-		<label><input type="checkbox" checked id="toggleClue"> <span style="color:#FFC107">●</span> Clue</label>
-		<label><input type="checkbox" checked id="toggleSupply"> <span style="color:#FF9800">●</span> Supply</label>
-		<label><input type="checkbox" checked id="toggleCashReg"> <span style="color:#FFD700">●</span> Cash Register</label>
-		{% if is_admin %}
-		<hr style="margin: 10px 0;">
-		<label for="markerType">Add Marker:</label>
-		<select id="markerType" style="width:100%; padding:3px; margin-bottom:5px;">
-			<option value="spawn">Spawn (Blue)</option>
-			<option value="extraction">Extraction (Green)</option>
-			<option value="clue">Clue (Yellow)</option>
-			<option value="supply">Supply (Orange)</option>
-			<option value="cashReg">Cash Register (Gold)</option>
-		</select>
-		<button onclick="exportMarkers()" style="width:100%; padding:5px; cursor:pointer; margin-bottom:5px;">Export Markers</button>
-		{% endif %}
+	<div class="app-layout">
+		<div id="map"></div>
+		<aside class="sidebar d-flex flex-column flex-shrink-0 p-3 text-bg-dark">
+			<span class="fs-4 fw-semibold mb-3">Stillwater Map</span>
+			<hr>
+			<h5 class="sidebar-title">Legend</h5>
+			<ul class="list-unstyled mb-auto">
+				<li class="legend-item">
+					<span class="legend-item-label"><span class="legend-dot" style="background:#2196F3"></span> Spawn</span>
+					<label class="toggle-switch"><input type="checkbox" checked id="toggleSpawn"><span class="slider"></span></label>
+				</li>
+				<li class="legend-item">
+					<span class="legend-item-label"><img class="legend-icon" src="{% static 'gunSounds/icons/Extraction_Point_icon.png' %}" alt=""> Extraction</span>
+					<label class="toggle-switch"><input type="checkbox" checked id="toggleExtraction"><span class="slider"></span></label>
+				</li>
+				<li class="legend-item">
+					<span class="legend-item-label"><span class="legend-dot" style="background:#FFC107"></span> Clue</span>
+					<label class="toggle-switch"><input type="checkbox" checked id="toggleClue"><span class="slider"></span></label>
+				</li>
+				<li class="legend-item">
+					<span class="legend-item-label"><span class="legend-dot" style="background:#FF9800"></span> Supply</span>
+					<label class="toggle-switch"><input type="checkbox" checked id="toggleSupply"><span class="slider"></span></label>
+				</li>
+				<li class="legend-item">
+					<span class="legend-item-label"><span class="legend-dot" style="background:#FFD700"></span> Cash Register</span>
+					<label class="toggle-switch"><input type="checkbox" checked id="toggleCashReg"><span class="slider"></span></label>
+				</li>
+			</ul>
+			{% if is_admin %}
+			<hr>
+			<h5 class="sidebar-title">Add Marker</h5>
+			<label for="markerType" style="display:block; margin-bottom:5px; cursor:pointer;">Marker Type</label>
+			<select id="markerType" style="width:100%; padding:3px; margin-bottom:10px;">
+				<option value="spawn">Spawn (Blue)</option>
+				<option value="extraction">Extraction (Green)</option>
+				<option value="clue">Clue (Yellow)</option>
+				<option value="supply">Supply (Orange)</option>
+				<option value="cashReg">Cash Register (Gold)</option>
+			</select>
+			<button onclick="exportMarkers()" style="width:100%; padding:5px; cursor:pointer;">Export Markers</button>
+			{% endif %}
+		</aside>
 	</div>
 
 	{% if is_admin %}
@@ -184,7 +264,7 @@
 		// Define custom icons for different marker types
 		const iconPaths = {
 			spawn: "{% static 'gunSounds/icons/spawn.png' %}",
-			extraction: "{% static 'gunSounds/icons/extraction.webp' %}",
+			extraction: "{% static 'gunSounds/icons/Extraction_Point_icon.png' %}",
 			clue: null, // Use colored dot
 			supply: null,  // Use colored dot
 			cashReg: null  // Use colored dot
